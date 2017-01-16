@@ -3,6 +3,7 @@ const Model = require('../src/Model'),
       Sensor = require('../src/Model/Sensor'),
       Action = require('../src/Model/Action'),
       Location = require('../src/Model/Location'),
+      VirtualSensor = require('../src/Model/VirtualSensor'),
       Rule = require('../src/Model/Rule'),
       ConditionOrAction = require('../src/Model/ConditionOrAction');
 
@@ -28,6 +29,13 @@ class RuleFactory {
     this.rule.addCondition(condition);
   }
 
+  virtualSensorCondition(virtualSensor, label) {
+    let condition = new ConditionOrAction({}, this.model);
+    condition.virtualSensor = virtualSensor;
+    condition.initializer().addVirtualSensorLabelAttribute(virtualSensor, label);
+    this.rule.addCondition(condition);
+  }
+
   actionInLocation(actionName, location) {
     let action = new ConditionOrAction({}, this.model);
     action.actionType = actionName;
@@ -45,6 +53,27 @@ class RuleFactory {
 
   save() {
     this.model.addRule(this.rule);
+  }
+}
+
+class VirtualSensorFactory {
+  constructor(name, labels, model) {
+    this.model = model;
+    this.virtualSensor = new VirtualSensor({}, model);
+    this.virtualSensor.name = name;
+    this.virtualSensor.labels = labels;
+  }
+
+  set location(locationName) {
+    this.virtualSensor.locationName = locationName;
+  }
+
+  set sensors(sensors) {
+    this.virtualSensor.sensors = sensors;
+  }
+
+  save() {
+    this.model.addVirtualSensor(this.virtualSensor);
   }
 }
 
@@ -73,12 +102,22 @@ class InstallationFactory {
     return device;
   }
 
+  virtualSensor(name, labels, callback) {
+    let factory = new VirtualSensorFactory(name, labels, this.model);
+    if (callback) {
+      callback(factory);
+    }
+    factory.save();
+    return factory.virtualSensor;
+  }
+
   rule(callback) {
     let ruleFactory = new RuleFactory(this.model);
     if (callback) {
       callback(ruleFactory);
     }
     ruleFactory.save();
+    return ruleFactory.rule;
   }
 }
 

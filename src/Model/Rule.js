@@ -1,6 +1,7 @@
 const ConditionOrAction = require('./ConditionOrAction'),
 
       generateId = require('./generateId'),
+      ruleTypeIdentifier = require('./ruleTypeIdentifier'),
       _ = require('underscore');
 
 class Rule {
@@ -53,6 +54,10 @@ class Rule {
 
   addCondition(condition) { this.conditions.push(condition); }
   addAction(action) { this.actions.push(action); }
+
+  get typeId() {
+    return ruleTypeIdentifier(this);
+  }
 
   toData() {
     return {

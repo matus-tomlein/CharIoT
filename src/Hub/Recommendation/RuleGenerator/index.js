@@ -2,10 +2,13 @@ const Ontology = require('./Ontology'),
       Reasoner = Ontology.Reasoner,
       vocab = Ontology.vocabulary,
       EntityQuery = Ontology.EntityQuery,
+      _ = require('underscore'),
 
       generateSemanticRuleForRule = require('./generateSemanticRuleForRule'),
+      generateSemanticRuleForVirtualSensor = require('./generateSemanticRuleForVirtualSensor'),
       OntologyBuilder = require('./OntologyBuilder'),
       Rule = require('../../../Model/Rule'),
+      VirtualSensor = require('../../../Model/VirtualSensor'),
       Location = require('../../../Model/Location'),
       ConditionOrAction = require('../../../Model/ConditionOrAction');
 
@@ -18,9 +21,10 @@ class RuleGenerator {
   generate(callback) {
     let reasoner = new Reasoner();
 
-    // this.repository.virtualSensors.forEach((virtualSensor) => {
-    //
-    // });
+    this.repository.virtualSensors.forEach((virtualSensor) => {
+      let semanticRule = generateSemanticRuleForVirtualSensor(virtualSensor);
+      reasoner.addSemanticRule(semanticRule);
+    });
 
     reasoner.addFileSource(__dirname + '/helperRules.n3');
 
@@ -36,7 +40,10 @@ class RuleGenerator {
     reasoner.reason((err, store) => {
       if (err) { callback(err); return; }
 
-      callback(null, this._findRulesInStore(store));
+      let rules = this._findRulesInStore(store);
+      rules = this._removeInstalledRules(rules);
+
+      callback(null, rules);
     });
   }
 
@@ -94,7 +101,50 @@ class RuleGenerator {
       });
     }
 
+    if (conditionEntity.references.virtualSensor) {
+      let virtualSensorEntities = conditionEntity.references.virtualSensor;
+      virtualSensorEntities.forEach((virtualSensorEntity) => {
+        virtualSensorEntity.load();
+        let name = virtualSensorEntity.literals.name;
+        let labels = virtualSensorEntity.literals.label;
+        if (!Array.isArray(labels)) labels = [ labels ];
+        let locationEntity = virtualSensorEntity.references.location[0];
+        locationEntity.load();
+        let locationName = locationEntity.literals.name;
+
+        let existingVirtualSensor = this.installation.virtualSensors.find((vs) => {
+          return vs.name == name && vs.locationName == locationName &&
+            JSON.stringify(_.sortBy(vs.labels)) == JSON.stringify(_.sortBy(labels));
+        });
+
+        if (existingVirtualSensor) {
+          condition.virtualSensor = existingVirtualSensor;
+        } else {
+          let virtualSensor = new VirtualSensor({}, this.installation);
+          virtualSensor.name = name;
+          virtualSensor.labels = labels;
+          virtualSensor.locationName = locationName;
+
+          let sensors = virtualSensorEntity.literals.sensor;
+          if (!Array.isArray(sensors)) sensors = [ sensors ];
+          virtualSensor.sensors = sensors;
+
+          condition.recommendedVirtualSensor = virtualSensor;
+        }
+      });
+    }
+
     return condition;
+  }
+
+  _removeInstalledRules(rules) {
+    let installedRulesIds = this.installation.rules.map((rule) => {
+      return rule.typeId;
+    });
+
+    return rules.filter((rule) => {
+      return !installedRulesIds.includes(rule.typeId);
+    });
   }
 }
 

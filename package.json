@@ -28,6 +28,7 @@
     "jquery": "^3.1.1",
     "n3": "^0.8.5",
     "node-jsx": "^0.13.3",
+    "object-hash": "^1.1.5",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-router": "^3.0.0",

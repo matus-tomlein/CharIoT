@@ -1,5 +1,6 @@
 const _ = require('underscore'),
       Location = require('./Location'),
+      VirtualSensor = require('./VirtualSensor'),
       ConditionOrActionLabels = require('./ConditionOrActionLabels'),
       ConditionOrActionInitializer = require('./ConditionOrActionInitializer'),
       generateId = require('./generateId');
@@ -18,6 +19,11 @@ class ConditionOrAction {
   get actionType() { return this.data.actionType; }
   get requiredAttributes() { return this.data.requiredAttributes || []; }
   get attributes() { return this.data.attributes || {}; }
+  get recommendedVirtualSensor() {
+    if (this.data.recommendedVirtualSensor) {
+      return new VirtualSensor(this.data.recommendedVirtualSensor, this._model);
+    }
+  }
 
   set attributes(data) { this.data.attributes = data; }
   set requiredAttributes(data) { this.data.requiredAttributes = data; }
@@ -28,6 +34,9 @@ class ConditionOrAction {
   set virtualSensor(virtualSensor) {
     this.data.virtualSensorId = virtualSensor.id;
     this.location = virtualSensor.location();
+  }
+  set recommendedVirtualSensor(virtualSensor) {
+    this.data.recommendedVirtualSensor = virtualSensor.toData();
   }
 
   addRequiredAttribute(att) {
@@ -111,11 +120,11 @@ class ConditionOrAction {
   hasChosenService() {
     return this.data.sensorType || this.data.actionType || this.data.virtualSensorId;
   }
-  hasLocation() { return this.data.locationName; }
-  requiresSensor() { return this.data.sensorType; }
-  requiresDevice() { return this.data.deviceId; }
-  requiresVirtualSensor() { return this.data.virtualSensorId; }
-  requiresAction() { return this.data.actionType; }
+  hasLocation() { return this.data.locationName ? true : false; }
+  requiresSensor() { return this.data.sensorType ? true : false; }
+  requiresDevice() { return this.data.deviceId ? true : false; }
+  requiresVirtualSensor() { return this.data.virtualSensorId ? true : false; }
+  requiresAction() { return this.data.actionType ? true : false; }
 
   toData() {
     return this.data;

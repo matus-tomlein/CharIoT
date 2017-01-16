@@ -38,6 +38,23 @@ function createConditionOrActionBlank(condition, semanticRule) {
     });
   }
 
+  if (condition.requiresVirtualSensor()) {
+    let virtualSensor = condition.virtualSensor;
+    let virtualSensorNode = '?vs_' + hashString(virtualSensor.id);
+
+    semanticRule.precondition.push([
+      virtualSensorNode, rdf('type'), uri('VirtualSensor')
+    ]);
+    semanticRule.precondition.push([
+      virtualSensorNode, uri('id'), literal(virtualSensor.id)
+    ]);
+
+    conditionBlank.push({
+      predicate: uri('virtualSensor'),
+      object: virtualSensorNode
+    });
+  }
+
   if (condition.requiresAction()) {
     conditionBlank.push({
       predicate: uri('actionType'),
@@ -86,11 +103,6 @@ function createConditionOrActionBlank(condition, semanticRule) {
   return conditionBlank;
 }
 
-// [
-//   temperature, pressure, ...
-// ] => [
-//   virtual sensor based on the features
-// ]
 // [
 //   location with temperature sensor,
 //   virtual sensor name and labels that is built using temperature, pressure, ...

@@ -1,13 +1,25 @@
+const generateId = require('./generateId');
+
 class VirtualSensor {
   constructor(data, model) {
-    this.id = data.id;
-    this.name = data.name;
-    this.samples = data.samples;
-    this.labels = data.labels;
-    this.locationName = data.location;
-    this.sensors = data.sensors;
+    this.data = data || {};
+    this.data.id = this.data.id || generateId();
     this._model = model;
   }
+
+  get id() { return this.data.id; }
+  get name() { return this.data.name; }
+  get samples() { return this.data.samples; }
+  get labels() { return this.data.labels; }
+  get locationName() { return this.data.location; }
+  get sensors() { return this.data.sensors; }
+
+  set name(name) { this.data.name = name; }
+  set samples(samples) { this.data.samples = samples; }
+  set labels(labels) { this.data.labels = labels; }
+  set locationName(name) { this.data.location = name; }
+  set location(location) { this.locationName = location.name; }
+  set sensors(sensors) { this.data.sensors = sensors; }
 
   location() {
     return this._model.locations.find((loc) => {
@@ -46,6 +58,8 @@ class VirtualSensor {
 
     return sum / lengths.length;
   }
+
+  toData() { return this.data; }
 }
 
 module.exports = VirtualSensor;

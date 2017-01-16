@@ -44,6 +44,10 @@ class Model {
     this.data.input.rules.push(rule.toData());
   }
 
+  addVirtualSensor(virtualSensor) {
+    this.data.input.virtualSensors.push(virtualSensor.toData());
+  }
+
   get devices() {
     return wrap(this.data.giotto.devices, Device);
   }
