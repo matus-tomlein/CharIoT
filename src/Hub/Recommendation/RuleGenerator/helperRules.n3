@@ -1,0 +1,35 @@
+@prefix case: <http://matus.tomlein.org/case#> .
+
+{
+  [
+    a case:Device;
+    case:location ?location;
+    case:sensor [ case:name ?sensorType ]
+  ].
+} => {
+  ?location case:sensorType ?sensorType.
+}.
+
+{
+  [
+    a case:Device;
+    case:location ?location;
+    case:action [ case:name ?actionType ]
+  ].
+} => {
+  ?location case:actionType ?actionType.
+}.
+
+{
+  ?device a case:Device;
+    case:sensor [ case:name ?sensorType ].
+} => {
+  ?device case:sensorType ?sensorType.
+}.
+
+{
+  ?device a case:Device;
+    case:action [ case:name ?actionType ].
+} => {
+  ?device case:actionType ?actionType.
+}.
