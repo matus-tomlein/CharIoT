@@ -58780,7 +58780,7 @@ var NewVirtualSensorForm = function (_React$Component) {
     };
 
     _this.state = {
-      location: _this.props.model.locations()[0].name,
+      location: _this.props.model.locations[0].name,
       sensors: [],
       labels: [],
       name: ''
@@ -58852,7 +58852,7 @@ var NewVirtualSensorForm = function (_React$Component) {
       var _this2 = this;
 
       if (this.state.location) {
-        var location = this.props.model.locations().find(function (l) {
+        var location = this.props.model.locations.find(function (l) {
           return l.name == _this2.state.location;
         });
         return location.sensors().map(function (sensor) {
@@ -58866,7 +58866,7 @@ var NewVirtualSensorForm = function (_React$Component) {
     value: function render() {
       var _this3 = this;
 
-      var locationOptions = this.props.model.locations().map(function (location) {
+      var locationOptions = this.props.model.locations.map(function (location) {
         return React.createElement(
           'option',
           { value: location.id },
@@ -61994,7 +61994,7 @@ module.exports = function (model, filters, graphParams) {
       });
 
       if (vs.locationName) {
-        var location = vs.location();
+        var location = vs.location;
 
         graphParams.placements.push({
           of: vs.id,
@@ -62264,7 +62264,7 @@ var SensorCard = React.createClass({
         React.createElement(
           'td',
           null,
-          sensor.location
+          sensor.locationName
         )
       );
     });
@@ -62625,7 +62625,7 @@ var ConditionOrAction = function () {
     key: 'virtualSensor',
     set: function set(virtualSensor) {
       this.data.virtualSensorId = virtualSensor.id;
-      this.location = virtualSensor.location();
+      this.location = virtualSensor.location;
     },
     get: function get() {
       return this.referencedVirtualSensor || this.recommendedVirtualSensor;
@@ -63296,19 +63296,10 @@ var VirtualSensor = function () {
   }
 
   _createClass(VirtualSensor, [{
-    key: 'location',
-    value: function location() {
-      var _this = this;
-
-      return this._model.locations.find(function (loc) {
-        return loc.name == _this.locationName;
-      });
-    }
-  }, {
     key: 'sensorsByType',
     value: function sensorsByType() {
       var sensorsByType = {};
-      var sensorsInLocation = this.location().sensors();
+      var sensorsInLocation = this.location.sensors();
 
       this.sensors.forEach(function (sensorType) {
         var locationSensor = sensorsInLocation.find(function (sensor) {
@@ -63332,6 +63323,7 @@ var VirtualSensor = function () {
         });
         sensorIdsByType[type] = sensorIds;
       }
+      return sensorIdsByType;
     }
   }, {
     key: 'averageSampleLength',
@@ -63398,6 +63390,13 @@ var VirtualSensor = function () {
     }
   }, {
     key: 'location',
+    get: function get() {
+      var _this = this;
+
+      return this._model.locations.find(function (loc) {
+        return loc.name == _this.locationName;
+      });
+    },
     set: function set(location) {
       this.locationName = location.name;
     }

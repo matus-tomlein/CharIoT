@@ -1,28 +1,26 @@
-function VirtualSensorRuleCondition(condition) {
-  this.condition = condition;
+class VirtualSensorRuleCondition {
+  constructor(condition) {
+    this.condition = condition;
 
-  this.lastValue = null;
-  this.previouslySatisfied = false;
+    this.lastValue = null;
+    this.previouslySatisfied = false;
+  }
+
+  subscribedVirtualSensor() {
+    return this.condition.virtualSensor;
+  }
+
+  shouldNewSensorValueTrigger(newValue) {
+    this.lastValue = newValue;
+
+    var shouldTrigger = !this.previouslySatisfied && this.isSatisfied();
+    this.previouslySatisfied = this.isSatisfied();
+    return shouldTrigger;
+  }
+
+  isSatisfied() {
+    return this.condition.attributes.label == this.lastValue;
+  }
 }
-
-VirtualSensorRuleCondition.prototype = (function () {
-  return {
-    subscribedVirtualSensor: function () {
-      return this.condition.virtualSensor();
-    },
-
-    shouldNewSensorValueTrigger: function (newValue) {
-      this.lastValue = newValue;
-
-      var shouldTrigger = !this.previouslySatisfied && this.isSatisfied();
-      this.previouslySatisfied = this.isSatisfied();
-      return shouldTrigger;
-    },
-
-    isSatisfied: function () {
-      return this.condition.attributes().label == this.lastValue;
-    }
-  };
-})();
 
 module.exports = VirtualSensorRuleCondition;

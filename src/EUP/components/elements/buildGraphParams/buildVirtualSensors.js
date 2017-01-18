@@ -13,7 +13,7 @@ module.exports = (model, filters, graphParams) => {
       });
 
       if (vs.locationName) {
-        var location = vs.location();
+        var location = vs.location;
 
         graphParams.placements.push({
           of: vs.id,

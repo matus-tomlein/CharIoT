@@ -13,6 +13,11 @@ class VirtualSensor {
   get labels() { return this.data.labels; }
   get locationName() { return this.data.location; }
   get sensors() { return this.data.sensors; }
+  get location() {
+    return this._model.locations.find((loc) => {
+      return loc.name == this.locationName;
+    });
+  }
 
   set name(name) { this.data.name = name; }
   set samples(samples) { this.data.samples = samples; }
@@ -21,15 +26,9 @@ class VirtualSensor {
   set location(location) { this.locationName = location.name; }
   set sensors(sensors) { this.data.sensors = sensors; }
 
-  location() {
-    return this._model.locations.find((loc) => {
-      return loc.name == this.locationName;
-    });
-  }
-
   sensorsByType() {
     var sensorsByType = {};
-    var sensorsInLocation = this.location().sensors();
+    var sensorsInLocation = this.location.sensors();
 
     this.sensors.forEach((sensorType) => {
       var locationSensor = sensorsInLocation.find((sensor) => {
@@ -52,6 +51,7 @@ class VirtualSensor {
       });
       sensorIdsByType[type] = sensorIds;
     }
+    return sensorIdsByType;
   }
 
   averageSampleLength() {

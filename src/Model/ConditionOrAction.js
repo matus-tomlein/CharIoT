@@ -33,7 +33,7 @@ class ConditionOrAction {
   set device(device) { this.data.deviceId = device.id; }
   set virtualSensor(virtualSensor) {
     this.data.virtualSensorId = virtualSensor.id;
-    this.location = virtualSensor.location();
+    this.location = virtualSensor.location;
   }
   set recommendedVirtualSensor(virtualSensor) {
     this.data.recommendedVirtualSensor = virtualSensor.toData();

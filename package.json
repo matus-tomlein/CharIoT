@@ -27,6 +27,7 @@
     "compute-cosine-similarity": "^1.0.0",
     "express": "^4.14.0",
     "jquery": "^3.1.1",
+    "js-combinatorics": "^0.5.2",
     "n3": "^0.8.5",
     "node-jsx": "^0.13.3",
     "object-hash": "^1.1.5",

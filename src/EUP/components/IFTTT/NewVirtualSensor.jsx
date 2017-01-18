@@ -12,7 +12,7 @@ class NewVirtualSensorForm extends React.Component {
     this.props.callbacks.submit = () => { this.submit(); };
 
     this.state = {
-      location: this.props.model.locations()[0].name,
+      location: this.props.model.locations[0].name,
       sensors: [],
       labels: [],
       name: ''
@@ -74,7 +74,7 @@ class NewVirtualSensorForm extends React.Component {
 
   sensorTypesInLocation() {
     if (this.state.location) {
-      var location = this.props.model.locations().find((l) => {
+      var location = this.props.model.locations.find((l) => {
         return l.name == this.state.location;
       });
       return location.sensors().map((sensor) => { return sensor.name; });
@@ -83,7 +83,7 @@ class NewVirtualSensorForm extends React.Component {
   }
 
   render() {
-    var locationOptions = this.props.model.locations().map((location) => {
+    var locationOptions = this.props.model.locations.map((location) => {
       return <option value={location.id}>{location.name}</option>;
     });
     var sensorTypes = this.sensorTypesInLocation().map((sensor) => {

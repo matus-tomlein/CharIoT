@@ -73,7 +73,7 @@ class RuleExecution {
     var shouldTrigger = false;
     this.conditions.filter(function (condition) {
       return condition.subscribedVirtualSensor &&
-        condition.subscribedVirtualSensor() == sensor;
+        condition.subscribedVirtualSensor().id == sensor.id;
     }).forEach(function (condition) {
       if (condition.shouldNewSensorValueTrigger(value))
         shouldTrigger = true;

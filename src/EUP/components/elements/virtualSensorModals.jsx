@@ -11,7 +11,7 @@ var SensorCard = React.createClass({
     var services = sensor.sensors.map(function (type) {
       return <tr>
         <td>{type}</td>
-        <td>{sensor.location}</td>
+        <td>{sensor.locationName}</td>
       </tr>;
     });
     var labels = sensor.labels.join(', ');

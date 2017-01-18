@@ -6,10 +6,10 @@ class RuleAction {
   }
 
   trigger() {
-    var actionName = this.action.actionType();
+    var actionName = this.action.actionType;
 
     var devices = this.action.devicesWithAction();
-    if (this.action.attributes().locationScope == 'any' &&
+    if (this.action.attributes.locationScope == 'any' &&
         devices.length) {
       devices = [ devices[0] ];
     }

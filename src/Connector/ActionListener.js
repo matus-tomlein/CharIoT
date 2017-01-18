@@ -46,10 +46,9 @@ ActionListener.prototype = (function () {
     addTag: function (tag) {
       var that = this;
 
+      that.tags[tag.id] = tag;
       tag.writeIoData(0, function () {
-        tag.writeIoConfig(1, function () {
-          that.tags[tag.id] = tag;
-        });
+        tag.writeIoConfig(1, function () { });
       });
     },
 

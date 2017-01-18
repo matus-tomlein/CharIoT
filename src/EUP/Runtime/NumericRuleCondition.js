@@ -22,9 +22,9 @@ class NumericRuleCondition {
 
   isSatisfied() {
     var val = this.value();
-    var conditionValue = this.condition.attributes().condition.value;
+    var conditionValue = this.condition.attributes.condition.value;
 
-    switch (this.condition.attributes().condition.operator) {
+    switch (this.condition.attributes.condition.operator) {
     case 'EQ':
       return val == conditionValue;
     case 'NEQ':
