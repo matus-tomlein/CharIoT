@@ -87,12 +87,16 @@ class ConditionOrAction {
     return [];
   }
 
-  get virtualSensor() {
+  get referencedVirtualSensor() {
     if (this.data.virtualSensorId && this._model) {
       return this._model.virtualSensors.find((virtualSensor) => {
         return virtualSensor.id == this.data.virtualSensorId;
       });
     }
+  }
+
+  get virtualSensor() {
+    return this.referencedVirtualSensor || this.recommendedVirtualSensor;
   }
 
   get location() {
@@ -123,7 +127,9 @@ class ConditionOrAction {
   hasLocation() { return this.data.locationName ? true : false; }
   requiresSensor() { return this.data.sensorType ? true : false; }
   requiresDevice() { return this.data.deviceId ? true : false; }
-  requiresVirtualSensor() { return this.data.virtualSensorId ? true : false; }
+  requiresReferencedVirtualSensor() { return this.data.virtualSensorId ? true : false; }
+  requiresRecommendedVirtualSensor() { return this.data.recommendedVirtualSensor ? true : false; }
+  requiresVirtualSensor() { return this.requiresReferencedVirtualSensor() || this.requiresRecommendedVirtualSensor(); }
   requiresAction() { return this.data.actionType ? true : false; }
 
   toData() {

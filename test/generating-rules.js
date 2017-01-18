@@ -243,7 +243,7 @@ describe('generating rules', () => {
       }), (rules) => {
         expect(rules.length).to.equal(1);
 
-        let virtualSensor = rules[0].conditions[0].virtualSensor;
+        let virtualSensor = rules[0].conditions[0].referencedVirtualSensor;
         expect(virtualSensor).not.to.be.ok;
         let recommendedVirtualSensor = rules[0].conditions[0].recommendedVirtualSensor;
         expect(recommendedVirtualSensor).to.be.ok;

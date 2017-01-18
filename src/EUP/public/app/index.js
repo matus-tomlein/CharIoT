@@ -62526,9 +62526,19 @@ var ConditionOrAction = function () {
       return this.data.deviceId ? true : false;
     }
   }, {
+    key: 'requiresReferencedVirtualSensor',
+    value: function requiresReferencedVirtualSensor() {
+      return this.data.virtualSensorId ? true : false;
+    }
+  }, {
+    key: 'requiresRecommendedVirtualSensor',
+    value: function requiresRecommendedVirtualSensor() {
+      return this.data.recommendedVirtualSensor ? true : false;
+    }
+  }, {
     key: 'requiresVirtualSensor',
     value: function requiresVirtualSensor() {
-      return this.data.virtualSensorId ? true : false;
+      return this.requiresReferencedVirtualSensor() || this.requiresRecommendedVirtualSensor();
     }
   }, {
     key: 'requiresAction',
@@ -62617,6 +62627,11 @@ var ConditionOrAction = function () {
       this.data.virtualSensorId = virtualSensor.id;
       this.location = virtualSensor.location();
     },
+    get: function get() {
+      return this.referencedVirtualSensor || this.recommendedVirtualSensor;
+    }
+  }, {
+    key: 'referencedVirtualSensor',
     get: function get() {
       var _this4 = this;
 

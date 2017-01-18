@@ -76,10 +76,11 @@ describe('ranking rules by sensor similarity', () => {
         vs.location = 'Meeting room';
         vs.sensors = [ 'Temperature', 'Lux' ];
       });
-      let meetingRoomRuleType = meetingRoom.rule((rule) => {
+      let meetingRoomRule = meetingRoom.rule((rule) => {
         rule.virtualSensorCondition(meetingRoomVS, 'Night');
         rule.actionInLocation('Buzzer', 'Meeting room');
-      }).typeId;
+      });
+      let meetingRoomRuleType = meetingRoomRule.typeId;
 
       let garage = new InstallationFactory();
       garage.sensortag('Garage', (tag) => { tag.garageInWinter(); });
@@ -87,10 +88,11 @@ describe('ranking rules by sensor similarity', () => {
         vs.location = 'Garage';
         vs.sensors = [ 'Temperature', 'Lux' ];
       });
-      let garageRuleType = garage.rule((rule) => {
+      let garageRule = garage.rule((rule) => {
         rule.virtualSensorCondition(garageVS, 'Evening');
-        rule.actionOnDevice('Red LED', 'Garage');
-      }).typeId;
+        rule.actionInLocation('Red LED', 'Garage');
+      });
+      let garageRuleType = garageRule.typeId;
 
       let livingRoom = new InstallationFactory();
       livingRoom.sensortag('Living room', (tag) => { tag.livingRoom(); });
