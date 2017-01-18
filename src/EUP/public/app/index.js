@@ -62846,57 +62846,87 @@ var Location = require('./Location'),
 
 var Device = function () {
   function Device(data, model) {
-    var _this = this;
-
     _classCallCheck(this, Device);
 
     this.data = data;
-    this.id = data.id || generateId();
-    this.tagId = data.tagId;
-    this.name = data.name;
-    this.locations = (data.locations || []).map(function (location) {
-      return new Location(location.name, model);
-    });
-    this.sensors = (data.sensors || []).map(function (sensor) {
-      return new Sensor(sensor, _this);
-    });
-    this.actions = (data.actions || []).map(function (action) {
-      return new Action(action, _this);
-    });
+    this.model = model;
+
+    this.id = this.id || generateId();
+    this.data.locations = this.data.locations || [];
+    this.data.sensors = this.data.sensors || [];
+    this.data.actions = this.data.actions || [];
   }
 
   _createClass(Device, [{
     key: 'addLocation',
     value: function addLocation(location) {
-      this.locations.push(location);
+      this.data.locations.push(location.toData());
     }
   }, {
     key: 'addSensor',
     value: function addSensor(sensor) {
-      this.sensors.push(sensor);
+      this.data.sensors.push(sensor.toData());
     }
   }, {
     key: 'addAction',
     value: function addAction(action) {
-      this.actions.push(action);
+      this.data.actions.push(action.toData());
     }
   }, {
     key: 'toData',
     value: function toData() {
-      return {
-        id: this.id,
-        tagId: this.tagId,
-        name: this.name,
-        locations: this.locations.map(function (location) {
-          return location.toData();
-        }),
-        sensors: this.sensors.map(function (sensor) {
-          return sensor.toData();
-        }),
-        actions: this.actions.map(function (action) {
-          return action.toData();
-        })
-      };
+      return this.data;
+    }
+  }, {
+    key: 'id',
+    get: function get() {
+      return this.data.id || generateId();
+    },
+    set: function set(id) {
+      this.data.id = id;
+    }
+  }, {
+    key: 'tagId',
+    get: function get() {
+      return this.data.tagId;
+    },
+    set: function set(tagId) {
+      this.data.tagId = tagId;
+    }
+  }, {
+    key: 'name',
+    get: function get() {
+      return this.data.name;
+    },
+    set: function set(name) {
+      this.data.name = name;
+    }
+  }, {
+    key: 'locations',
+    get: function get() {
+      var _this = this;
+
+      return (this.data.locations || []).map(function (location) {
+        return new Location(location.name, _this.model);
+      });
+    }
+  }, {
+    key: 'sensors',
+    get: function get() {
+      var _this2 = this;
+
+      return (this.data.sensors || []).map(function (sensor) {
+        return new Sensor(sensor, _this2);
+      });
+    }
+  }, {
+    key: 'actions',
+    get: function get() {
+      var _this3 = this;
+
+      return (this.data.actions || []).map(function (action) {
+        return new Action(action, _this3);
+      });
     }
   }]);
 
@@ -63070,6 +63100,7 @@ var Rule = function () {
 
     this.id = data.id || generateId();
     this.data = data;
+    this.model = model;
 
     this.conditions = (data.conditions || []).map(function (condition) {
       return new ConditionOrAction(condition, model);
@@ -63176,18 +63207,52 @@ var Sensor = function () {
   function Sensor(data, device) {
     _classCallCheck(this, Sensor);
 
-    this.id = data.id || generateId();
-    this.name = data.name;
+    this.data = data;
     this.device = device;
+    this.id = this.id || generateId();
   }
 
   _createClass(Sensor, [{
     key: 'toData',
     value: function toData() {
-      return {
-        id: this.id,
-        name: this.name
-      };
+      return this.data;
+    }
+  }, {
+    key: 'id',
+    get: function get() {
+      return this.data.id;
+    },
+    set: function set(id) {
+      this.data.id = id;
+    }
+  }, {
+    key: 'name',
+    get: function get() {
+      return this.data.name;
+    },
+    set: function set(name) {
+      this.data.name = name;
+    }
+  }, {
+    key: 'min',
+    get: function get() {
+      return this.data.min || 0;
+    },
+    set: function set(min) {
+      this.data.min = min;
+    }
+  }, {
+    key: 'max',
+    get: function get() {
+      return this.data.max || 100;
+    },
+    set: function set(max) {
+      this.data.max = max;
+    }
+  }, {
+    key: 'model',
+    get: function get() {
+      return this.device.model;
     }
   }]);
 
@@ -63225,9 +63290,9 @@ var VirtualSensor = function () {
       });
     }
   }, {
-    key: 'sensorIdsByType',
-    value: function sensorIdsByType() {
-      var idsByType = {};
+    key: 'sensorsByType',
+    value: function sensorsByType() {
+      var sensorsByType = {};
       var sensorsInLocation = this.location().sensors();
 
       this.sensors.forEach(function (sensorType) {
@@ -63235,15 +63300,23 @@ var VirtualSensor = function () {
           return sensor.name == sensorType;
         });
         if (locationSensor) {
-          var sensorIds = locationSensor.sensors().map(function (sensor) {
-            return sensor.id;
-          });
-
-          idsByType[sensorType] = sensorIds;
+          sensorsByType[sensorType] = locationSensor.sensors();
         }
       });
 
-      return idsByType;
+      return sensorsByType;
+    }
+  }, {
+    key: 'sensorIdsByType',
+    value: function sensorIdsByType() {
+      var sensorsByType = this.sensorsByType();
+      var sensorIdsByType = {};
+      for (var type in sensorsByType) {
+        var sensorIds = sensorsByType[type].map(function (sensor) {
+          return sensor.id;
+        });
+        sensorIdsByType[type] = sensorIds;
+      }
     }
   }, {
     key: 'averageSampleLength',
@@ -63415,7 +63488,7 @@ var Model = function () {
   }, {
     key: 'devices',
     get: function get() {
-      return wrap(this.data.giotto.devices, Device);
+      return wrap(this.data.giotto.devices, Device, this);
     }
   }, {
     key: 'virtualSensors',

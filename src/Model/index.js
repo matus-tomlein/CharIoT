@@ -49,7 +49,7 @@ class Model {
   }
 
   get devices() {
-    return wrap(this.data.giotto.devices, Device);
+    return wrap(this.data.giotto.devices, Device, this);
   }
 
   get virtualSensors() {

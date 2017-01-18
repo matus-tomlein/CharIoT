@@ -7,40 +7,42 @@ const Location = require('./Location'),
 class Device {
   constructor(data, model) {
     this.data = data;
-    this.id = data.id || generateId();
-    this.tagId = data.tagId;
-    this.name = data.name;
-    this.locations = (data.locations || []).map((location) => {
-      return new Location(location.name, model);
+    this.model = model;
+
+    this.id = this.id || generateId();
+    this.data.locations = this.data.locations || [];
+    this.data.sensors = this.data.sensors || [];
+    this.data.actions = this.data.actions || [];
+  }
+
+  get id() { return this.data.id || generateId(); }
+  get tagId() { return this.data.tagId; }
+  get name() { return this.data.name; }
+  get locations() {
+    return (this.data.locations || []).map((location) => {
+      return new Location(location.name, this.model);
     });
-    this.sensors = (data.sensors || []).map((sensor) => {
+  }
+  get sensors() {
+    return (this.data.sensors || []).map((sensor) => {
       return new Sensor(sensor, this);
     });
-    this.actions = (data.actions || []).map((action) => {
+  }
+  get actions() {
+    return (this.data.actions || []).map((action) => {
       return new Action(action, this);
     });
   }
 
-  addLocation(location) { this.locations.push(location); }
-  addSensor(sensor) { this.sensors.push(sensor); }
-  addAction(action) { this.actions.push(action); }
+  set id(id) { this.data.id = id; }
+  set tagId(tagId) { this.data.tagId = tagId; }
+  set name(name) { this.data.name = name; }
 
-  toData() {
-    return {
-      id: this.id,
-      tagId: this.tagId,
-      name: this.name,
-      locations: this.locations.map((location) => {
-        return location.toData();
-      }),
-      sensors: this.sensors.map((sensor) => {
-        return sensor.toData();
-      }),
-      actions: this.actions.map((action) => {
-        return action.toData();
-      })
-    };
-  }
+  addLocation(location) { this.data.locations.push(location.toData()); }
+  addSensor(sensor) { this.data.sensors.push(sensor.toData()); }
+  addAction(action) { this.data.actions.push(action.toData()); }
+
+  toData() { return this.data; }
 }
 
 module.exports = Device;

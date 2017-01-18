@@ -20,19 +20,24 @@ class RuleGenerator {
 
   generate(callback) {
     let reasoner = new Reasoner();
+    reasoner.addFileSource(__dirname + '/helperRules.n3');
 
-    this.repository.virtualSensors.forEach((virtualSensor) => {
+    let installations = this.repository.installations.filter((i) => {
+      return i.id != this.installation.id;
+    });
+    let virtualSensors = _.flatten(installations.map((i) => { return i.virtualSensors; }));
+
+    virtualSensors.forEach((virtualSensor) => {
       let semanticRule = generateSemanticRuleForVirtualSensor(virtualSensor);
       reasoner.addSemanticRule(semanticRule);
     });
-
-    reasoner.addFileSource(__dirname + '/helperRules.n3');
 
     let builder = new OntologyBuilder(this.installation);
     builder.build();
     reasoner.addStore(builder.store);
 
-    this.repository.rules.forEach((rule) => {
+    let rules = _.flatten(installations.map((i) => { return i.rules; }));
+    rules.forEach((rule) => {
       let semanticRule = generateSemanticRuleForRule(rule);
       reasoner.addSemanticRule(semanticRule);
     });

@@ -27,8 +27,8 @@ class VirtualSensor {
     });
   }
 
-  sensorIdsByType() {
-    var idsByType = {};
+  sensorsByType() {
+    var sensorsByType = {};
     var sensorsInLocation = this.location().sensors();
 
     this.sensors.forEach((sensorType) => {
@@ -36,15 +36,22 @@ class VirtualSensor {
         return sensor.name == sensorType;
       });
       if (locationSensor) {
-        var sensorIds = locationSensor.sensors().map((sensor) => {
-          return sensor.id;
-        });
-
-        idsByType[sensorType] = sensorIds;
+        sensorsByType[sensorType] = locationSensor.sensors();
       }
     });
 
-    return idsByType;
+    return sensorsByType;
+  }
+
+  sensorIdsByType() {
+    let sensorsByType = this.sensorsByType();
+    let sensorIdsByType = {};
+    for (let type in sensorsByType) {
+      var sensorIds = sensorsByType[type].map((sensor) => {
+        return sensor.id;
+      });
+      sensorIdsByType[type] = sensorIds;
+    }
   }
 
   averageSampleLength() {

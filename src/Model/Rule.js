@@ -8,6 +8,7 @@ class Rule {
   constructor(data, model) {
     this.id = data.id || generateId();
     this.data = data;
+    this.model = model;
 
     this.conditions = (data.conditions || []).map((condition) => {
       return new ConditionOrAction(condition, model);
