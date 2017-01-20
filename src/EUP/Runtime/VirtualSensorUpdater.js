@@ -47,15 +47,13 @@ class VirtualSensorUpdater {
 
   _train(callback) {
     this.virtualSensorInfo.samples.forEach((sample) => {
-      var sensorIdsByType = sample.sensors;
-      var uuids = this.virtualSensorInfo.sensors.map((sensorType) => {
-        return sensorIdsByType[sensorType];
-      });
+      var uuids = this.virtualSensorInfo.sampleUuids(sample);
 
       this.virtualSensor.addSample(uuids,
           sample.start,
           sample.end,
-          sample.label);
+          sample.label,
+          sample.features);
     });
 
     this.virtualSensor.train(callback);

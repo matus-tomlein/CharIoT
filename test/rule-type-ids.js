@@ -75,29 +75,29 @@ describe('rule type identifiers', () => {
     expect(id1).not.to.eq(id2);
   });
 
-  it('are different for rules with different sensor conditions', () => {
-    let id1, id2;
-
-    factory((inst) => {
-      inst.sensortag('Living room');
-      let rule = inst.rule((rule) => {
-        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Living room');
-        rule.actionInLocation('Buzzer', 'Living room');
-      });
-      id1 = rule.typeId;
-    });
-
-    factory((inst) => {
-      inst.sensortag('Bedroom');
-      let rule = inst.rule((rule) => {
-        rule.sensorConditionInLocation('Temperature', 'LT', 1, 'Bedroom');
-        rule.actionInLocation('Buzzer', 'Living room');
-      });
-      id2 = rule.typeId;
-    });
-
-    expect(id1).not.to.eq(id2);
-  });
+  // it('are different for rules with different sensor conditions', () => {
+  //   let id1, id2;
+  //
+  //   factory((inst) => {
+  //     inst.sensortag('Living room');
+  //     let rule = inst.rule((rule) => {
+  //       rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Living room');
+  //       rule.actionInLocation('Buzzer', 'Living room');
+  //     });
+  //     id1 = rule.typeId;
+  //   });
+  //
+  //   factory((inst) => {
+  //     inst.sensortag('Bedroom');
+  //     let rule = inst.rule((rule) => {
+  //       rule.sensorConditionInLocation('Temperature', 'LT', 1, 'Bedroom');
+  //       rule.actionInLocation('Buzzer', 'Living room');
+  //     });
+  //     id2 = rule.typeId;
+  //   });
+  //
+  //   expect(id1).not.to.eq(id2);
+  // });
 
   it('are the same for rules with similar virtual sensors', () => {
     let id1, id2;
@@ -200,6 +200,28 @@ describe('rule type identifiers', () => {
         rule.actionInLocation('Red LED', 'Bedroom');
       });
       id2 = rule.typeId;
+    });
+
+    expect(id1).to.eq(id2);
+  });
+
+  it('doesn\'t care about the specific attributes of rules (e.g., "> 1" or "< 10")', () => {
+    let id1, id2;
+
+    factory((inst) => {
+      inst.sensortag('Bedroom');
+
+      let rule1 = inst.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'GT', 1, 'Bedroom');
+        rule.actionInLocation('Red LED', 'Bedroom');
+      });
+      id1 = rule1.typeId;
+
+      let rule2 = inst.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'LT', 10, 'Bedroom');
+        rule.actionInLocation('Red LED', 'Bedroom');
+      });
+      id2 = rule2.typeId;
     });
 
     expect(id1).to.eq(id2);

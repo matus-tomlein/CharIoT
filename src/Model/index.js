@@ -33,8 +33,10 @@ class Model {
     this.data = data || JSON.parse(JSON.stringify(blankData));
     this.filter = filter || {};
 
-    this.id = this.data.userId || generateId();
+    this.data.userId = this.data.userId || generateId();
   }
+
+  get id() { return this.data.userId || generateId(); }
 
   addDevice(device) {
     this.data.giotto.devices.push(device.toData());
@@ -56,6 +58,10 @@ class Model {
     return wrap(this.data.input.virtualSensors, VirtualSensor, this);
   }
 
+  get recommendedVirtualSensors() {
+    return wrap(this.data.recommended.virtualSensors, VirtualSensor, this);
+  }
+
   get rules() {
     return wrap(this.data.input.rules, Rule, this);
   }
@@ -75,14 +81,14 @@ class Model {
   }
 
   get sensors() {
-    var sensors = this.devices.forEach((device) => {
+    var sensors = this.devices.map((device) => {
       return device.sensors;
     });
     return _.flatten(sensors);
   }
 
   get actions() {
-    var actions = this.devices.forEach((device) => {
+    var actions = this.devices.map((device) => {
       return device.actions;
     });
     return _.flatten(actions);

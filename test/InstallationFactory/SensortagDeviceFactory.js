@@ -1,4 +1,7 @@
-const Device = require('../../src/Model/Device'),
+const randgen = require('randgen'),
+      rnorm = randgen.rnorm,
+
+      Device = require('../../src/Model/Device'),
       Sensor = require('../../src/Model/Sensor'),
       Action = require('../../src/Model/Action'),
       Location = require('../../src/Model/Location');
@@ -29,31 +32,31 @@ class SensortagDeviceFactory {
   }
 
   meetingRoom() {
-    this.installation.generateSensorData(this.device, 'Temperature', () => { return 20; });
-    this.installation.generateSensorData(this.device, 'Humidity', () => { return 22; });
-    this.installation.generateSensorData(this.device, 'Lux', () => { return 100; });
-    this.installation.generateSensorData(this.device, 'Pressure', () => { return 25; });
+    this.installation.generateSensorData(this.device, 'Temperature', () => { return rnorm(20, 5); });
+    this.installation.generateSensorData(this.device, 'Humidity', () => { return rnorm(22, 10); });
+    this.installation.generateSensorData(this.device, 'Lux', () => { return rnorm(100, 50); });
+    this.installation.generateSensorData(this.device, 'Pressure', () => { return rnorm(25, 5); });
   }
 
   livingRoom() {
-    this.installation.generateSensorData(this.device, 'Temperature', () => { return 24; });
-    this.installation.generateSensorData(this.device, 'Humidity', () => { return 18; });
-    this.installation.generateSensorData(this.device, 'Lux', () => { return 120; });
-    this.installation.generateSensorData(this.device, 'Pressure', () => { return 26; });
+    this.installation.generateSensorData(this.device, 'Temperature', () => { return rnorm(24, 6); });
+    this.installation.generateSensorData(this.device, 'Humidity', () => { return rnorm(18, 9); });
+    this.installation.generateSensorData(this.device, 'Lux', () => { return rnorm(120, 70); });
+    this.installation.generateSensorData(this.device, 'Pressure', () => { return rnorm(26, 7); });
   }
 
   garageInWinter() {
-    this.installation.generateSensorData(this.device, 'Temperature', () => { return 10; });
-    this.installation.generateSensorData(this.device, 'Humidity', () => { return 30; });
-    this.installation.generateSensorData(this.device, 'Lux', () => { return 30; });
-    this.installation.generateSensorData(this.device, 'Pressure', () => { return 24; });
+    this.installation.generateSensorData(this.device, 'Temperature', () => { return rnorm(10, 8); });
+    this.installation.generateSensorData(this.device, 'Humidity', () => { return rnorm(30, 11); });
+    this.installation.generateSensorData(this.device, 'Lux', () => { return rnorm(30, 50); });
+    this.installation.generateSensorData(this.device, 'Pressure', () => { return rnorm(24, 6); });
   }
 
   outsideInWinter() {
-    this.installation.generateSensorData(this.device, 'Temperature', () => { return 1; });
-    this.installation.generateSensorData(this.device, 'Humidity', () => { return 40; });
-    this.installation.generateSensorData(this.device, 'Lux', () => { return 150; });
-    this.installation.generateSensorData(this.device, 'Pressure', () => { return 20; });
+    this.installation.generateSensorData(this.device, 'Temperature', () => { return rnorm(1, 11); });
+    this.installation.generateSensorData(this.device, 'Humidity', () => { return rnorm(40, 13); });
+    this.installation.generateSensorData(this.device, 'Lux', () => { return rnorm(150, 90); });
+    this.installation.generateSensorData(this.device, 'Pressure', () => { return rnorm(20, 7); });
   }
 
   save() {

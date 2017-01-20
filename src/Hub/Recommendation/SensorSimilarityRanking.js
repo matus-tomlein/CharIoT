@@ -18,9 +18,17 @@ class SensorSimilarityRanking {
 
         let rank = _.max(ranks);
         if (ranksByType[rule.typeId]) {
-          ranksByType[rule.typeId] = _.max([ rank, ranksByType[rule.typeId] ]);
+          if (rank > ranksByType) {
+            ranksByType[rule.typeId] = {
+              rank: rank,
+              ruleId: rule.id
+            };
+          }
         } else {
-          ranksByType[rule.typeId] = rank;
+          ranksByType[rule.typeId] = {
+            rank: rank,
+            ruleId: rule.id
+          };
         }
       }
     });
@@ -49,14 +57,13 @@ class SensorSimilarityRanking {
         let sensorsB = sensorsByTypeB[key];
 
         let sensorsToFuzzySet = (sensors) => {
-          let fuzzySets = sensors.filter((sensor) => {
-            let dataModel = this.repository.dataModelWithId(sensor.model.id);
-            return dataModel.hasFuzzySetForSensor(sensor);
-          }).map((sensor) => {
+          let fuzzySets = sensors.map((sensor) => {
             let dataModel = this.repository.dataModelWithId(sensor.model.id);
             return dataModel.sensorFuzzySet(sensor);
-          });
-          return fuzzySets.reduce((set1, set2) => { set1.combineWith(set2); return set1; });
+          }).filter((fs) => { return fs; });
+          if (fuzzySets.length) {
+            return fuzzySets.reduce((set1, set2) => { set1.combineWith(set2); return set1; });
+          }
         };
 
         let fuzzySetA = sensorsToFuzzySet(sensorsA);

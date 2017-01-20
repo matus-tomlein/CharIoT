@@ -20,7 +20,7 @@ function conditionValues(condition) {
       sensors: _.sortBy(virtualSensor.sensors)
     };
   }
-  values.attributes = condition.attributes;
+  // values.attributes = condition.attributes;
 
   return values;
 }

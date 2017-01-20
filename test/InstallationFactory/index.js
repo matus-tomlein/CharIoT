@@ -1,7 +1,7 @@
 const _ = require('underscore'),
 
       Model = require('../../src/Model'),
-      InstallationDataModel = require('../../src/Hub/Recommendation/InstallationDataModel'),
+      DataModel = require('../../src/DataModel'),
       SensortagDeviceFactory = require('./SensortagDeviceFactory'),
       VirtualSensorFactory = require('./VirtualSensorFactory'),
       RuleFactory = require('./RuleFactory');
@@ -50,7 +50,7 @@ class InstallationFactory {
   }
 
   get dataModel() {
-    let dataModel = new InstallationDataModel(this.model);
+    let dataModel = new DataModel(this.model);
 
     this.sensorDataSamplings.forEach((sensorDataSampling) => {
       let sensor = sensorDataSampling.device.sensors.find((sensor) => {

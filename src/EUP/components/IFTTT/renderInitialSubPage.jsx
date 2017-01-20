@@ -10,7 +10,7 @@ module.exports = (page) => {
   if (page.state.conditions.length && page.state.actions.length) {
     var installCallback = () => {
       var rule = {
-        id: generateId,
+        id: generateId(),
         conditions: page.state.conditions,
         actions: page.state.actions
       };

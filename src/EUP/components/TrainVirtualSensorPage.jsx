@@ -1,4 +1,4 @@
-var React = require('react'),
+let React = require('react'),
     $ = require('jquery'),
     browserHistory = require('react-router').browserHistory,
 
@@ -21,13 +21,13 @@ class TrainVirtualSensorPage extends React.Component {
 
   _loadModel() {
     modelHelper.fetch((err, data) => {
-      var model = modelHelper.create(data);
-      var sensor = model.virtualSensors.find((sensor) => {
+      let model = modelHelper.create(data);
+      let sensor = model.virtualSensors.find((sensor) => {
         return sensor.id == this.props.params.id;
       });
 
       if (sensor) {
-        var state = this.state;
+        let state = this.state;
         state.data = sensor;
         state.model = model;
         this.setState(state);
@@ -48,16 +48,16 @@ class TrainVirtualSensorPage extends React.Component {
   _handleStartTraining(label) {
     this.getTime((time) => {
       this.state.trainingLabel = label;
-      this.state.training = time;
+      this.state.startedDemonstrating = time;
       this.setState(this.state);
     });
   }
 
   _handleStopTraining() {
-    var sensor = this.state.data;
-    var startedAt = this.state.training;
-    var label = this.state.trainingLabel;
-    var usedSensors = sensor.sensorIdsByType();
+    let sensor = this.state.data;
+    let startedAt = this.state.startedDemonstrating;
+    let label = this.state.trainingLabel;
+    let usedSensors = sensor.sensorIdsByType();
 
     $.get('/api/time', (stoppedAt) => {
       $.post('/api/virtualSensors/' + sensor.id + '/samples', {
@@ -68,7 +68,7 @@ class TrainVirtualSensorPage extends React.Component {
         label: label
       }, () => {
         this.setState({
-          training: null,
+          startedDemonstrating: null,
           trainingLabel: null
         });
         this._loadModel();
@@ -77,25 +77,33 @@ class TrainVirtualSensorPage extends React.Component {
   }
 
   _handleCancelTraining() {
-    this.state.training = null;
+    this.state.startedDemonstrating = null;
     this.state.trainingLabel = null;
     this.setState(this.state);
   }
 
   _handleDoneTraining() {
-    browserHistory.push('/refresh');
+    this.setState({ startedTraining: true });
   }
 
   render() {
-    var that = this;
+    let that = this;
     if (!this.state.data)
       return <Loading />;
 
-    var body;
-    var sensor = this.state.data;
+    let body;
+    let sensor = this.state.data;
 
-    if (this.state.training) {
-      var text = 'Demonstrate the "' + this.state.trainingLabel + '" behaviour...';
+    if (this.state.startedTraining) {
+      $.get('/api/virtualSensors/' + sensor.id + '/train', () => {
+        browserHistory.push('/refresh');
+      });
+
+      body = <div className='text-center'>
+        <Loading text='Training...' />
+      </div>;
+    } else if (this.state.startedDemonstrating) {
+      let text = 'Demonstrate the "' + this.state.trainingLabel + '" behaviour...';
       body = <div className='text-center'>
         <Loading text={text} />
         <div className='btn-group'>
@@ -109,11 +117,11 @@ class TrainVirtualSensorPage extends React.Component {
       </div>;
 
     } else {
-      var samples = (sensor.samples || []).map((sample) => {
-        var startDate = new Date(sample.start * 1000);
-        var endDate = new Date(sample.end * 1000);
-        var start = startDate.toDateString() + ' ' + startDate.toLocaleTimeString();
-        var end = endDate.toDateString() + ' ' + endDate.toLocaleTimeString();
+      let samples = (sensor.samples || []).map((sample) => {
+        let startDate = new Date(sample.start * 1000);
+        let endDate = new Date(sample.end * 1000);
+        let start = startDate.toDateString() + ' ' + startDate.toLocaleTimeString();
+        let end = endDate.toDateString() + ' ' + endDate.toLocaleTimeString();
 
         return <tr>
           <td> {sample.label} </td>
@@ -123,7 +131,7 @@ class TrainVirtualSensorPage extends React.Component {
         </tr>;
       });
 
-      var rows;
+      let rows;
       if (samples.length) {
         rows = samples;
       } else {
@@ -132,8 +140,8 @@ class TrainVirtualSensorPage extends React.Component {
         </tr>;
       }
 
-      var demonstrateButtons = sensor.labels.map((label) => {
-        var onClick = () => {
+      let demonstrateButtons = sensor.labels.map((label) => {
+        let onClick = () => {
           that._handleStartTraining(label);
         };
         return <button className='btn' onClick={onClick}> Demonstrate {label} </button>;

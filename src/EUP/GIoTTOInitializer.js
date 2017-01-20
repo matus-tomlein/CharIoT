@@ -25,6 +25,8 @@ class GIoTTOInitializer {
 
           devices[deviceUuid].sensors.push({
             name: sensor.metadata.Senses,
+            min: sensor.metadata.MinValue || 0,
+            max: sensor.metadata.MaxValue || 100,
             id: sensor.name
           });
         }

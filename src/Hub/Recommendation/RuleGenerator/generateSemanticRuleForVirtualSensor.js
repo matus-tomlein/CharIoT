@@ -32,6 +32,10 @@ module.exports = (virtualSensor) => {
       {
         predicate: uri('name'),
         object: literal(virtualSensor.name)
+      },
+      {
+        predicate: uri('samples'),
+        object: literal(JSON.stringify(virtualSensor.samples))
       }
   ];
 
@@ -42,7 +46,7 @@ module.exports = (virtualSensor) => {
     });
   });
 
-  let location = virtualSensor.location();
+  let location = virtualSensor.location;
   let locationNode = '?loc_' + hashString(location.name);
   semanticRule.precondition.push([
     locationNode, rdf('type'), uri('Location')

@@ -4,6 +4,9 @@ class VirtualSensor {
   constructor(data, model) {
     this.data = data || {};
     this.data.id = this.data.id || generateId();
+    this.data.samples = this.data.samples || [];
+    this.data.labels = this.data.labels || [];
+    this.data.sensors = this.data.sensors || [];
     this._model = model;
   }
 
@@ -64,6 +67,34 @@ class VirtualSensor {
     }, 0);
 
     return sum / lengths.length;
+  }
+
+  sampleUuids(sample) {
+    var sensorIdsByType = sample.sensors;
+    return this.sensors.map((sensorType) => {
+      return sensorIdsByType[sensorType];
+    });
+  }
+
+  addSample(sample) {
+    if (!this.data.samples) this.data.samples = [];
+    this.data.samples.push(sample);
+  }
+
+  trainSamples(api, callback) {
+    const async = require('async');
+    let vs = api.virtualSensor();
+    async.each(this.samples, (sample, done) => {
+      if (sample.features) { done(); return; }
+
+      var uuids = this.sampleUuids(sample);
+      vs.toFeatures(uuids, sample.start, sample.end, sample.label, (err, features) => {
+        if (err) { done(err); return; }
+
+        sample.features = features;
+        done(null);
+      });
+    }, callback);
   }
 
   toData() { return this.data; }

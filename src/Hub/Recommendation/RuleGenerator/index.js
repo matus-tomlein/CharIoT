@@ -116,6 +116,7 @@ class RuleGenerator {
         let locationEntity = virtualSensorEntity.references.location[0];
         locationEntity.load();
         let locationName = locationEntity.literals.name;
+        let samples = JSON.parse(virtualSensorEntity.literals.samples);
 
         let existingVirtualSensor = this.installation.virtualSensors.find((vs) => {
           return vs.name == name && vs.locationName == locationName &&
@@ -128,6 +129,7 @@ class RuleGenerator {
           let virtualSensor = new VirtualSensor({}, this.installation);
           virtualSensor.name = name;
           virtualSensor.labels = labels;
+          virtualSensor.samples = samples;
           virtualSensor.locationName = locationName;
 
           let sensors = virtualSensorEntity.literals.sensor;

@@ -64,7 +64,7 @@ function renderAttributes(page, model) {
 
           <p>
             <button className='btn' onClick={handleSubmit}>Done</button>
-            <button className='btn btn-link' onClick={backCallback}>Cancel</button>
+            <button className='btn btn-link' onClick={backCallback}>Remove</button>
           </p>
         </div>
       </div>

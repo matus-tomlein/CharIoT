@@ -39,8 +39,10 @@ class ServiceSearch extends React.Component {
       var name = service.serviceNameWithSource;
 
       var className = 'rounded padded ';
-      if (service.requiresVirtualSensor()) {
+      if (service.requiresReferencedVirtualSensor()) {
         className += 'green';
+      } else if (service.requiresRecommendedVirtualSensor()) {
+        className += 'yellow';
       } else if (service.hasLocation()) {
         className += 'lightred';
       } else if (service.requiresDevice()) {

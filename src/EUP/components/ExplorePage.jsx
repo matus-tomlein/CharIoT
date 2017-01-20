@@ -29,7 +29,7 @@ class Rule extends React.Component {
         </p>
         <p>
           <button className='btn' onClick={this._handleInstall}>
-            Configure
+            Adapt and install
           </button>
         </p>
       </div>

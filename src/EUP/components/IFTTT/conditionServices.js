@@ -11,6 +11,13 @@ function conditionServices(model) {
     sensors.push(condition.data);
   });
 
+  model.recommendedVirtualSensors.forEach((virtualSensor) => {
+    var condition = new ConditionOrAction({}, model);
+    condition.recommendedVirtualSensor = virtualSensor;
+    initializers.addVirtualSensorLabelAttribute(condition, virtualSensor);
+    sensors.push(condition.data);
+  });
+
   model.locations.forEach((location) => {
     location.sensors().forEach((sensor) => {
       var condition = new ConditionOrAction({}, model);

@@ -1,6 +1,14 @@
-const FuzzySet = require('./SensorSimilarityRanking/FuzzySet');
+const FuzzySet = require('./FuzzySet');
 
 class InstallationDataModel {
+  static fromData(data, installation) {
+    let dataModel = new InstallationDataModel(installation);
+    for (var sensorId in data.sensorFuzzySets) {
+      dataModel.sensorFuzzySets[sensorId] = new FuzzySet(data.sensorFuzzySets[sensorId]);
+    }
+    return dataModel;
+  }
+
   constructor(installation) {
     this.id = installation.id;
     this.sensorFuzzySets = {};
@@ -8,7 +16,13 @@ class InstallationDataModel {
 
   addSensorMeasurements(sensor, measurements) {
     let values = measurements.map((item) => { return item.value; });
-    this.sensorFuzzySets[sensor.id] = FuzzySet.fromSensorValues(values, sensor.min, sensor.max);
+    let fuzzySet = FuzzySet.fromSensorValues(values, sensor.min, sensor.max);
+    this.addSensorFuzzySet(sensor, fuzzySet);
+    return fuzzySet;
+  }
+
+  addSensorFuzzySet(sensor, fuzzySet) {
+    this.sensorFuzzySets[sensor.id] = fuzzySet;
   }
 
   hasFuzzySetForSensor(sensor) {
@@ -25,6 +39,7 @@ class InstallationDataModel {
       sets[key] = this.sensorFuzzySets[key].toData();
     }
     return {
+      id: this.id,
       sensorFuzzySets: sets
     };
   }

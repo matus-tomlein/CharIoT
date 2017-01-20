@@ -1,6 +1,6 @@
 /* global describe it */
 const expect = require('chai').expect,
-      Repository = require('../src/Hub/Recommendation/Repository'),
+      Repository = require('../src/Hub/Repository'),
       RuleGenerator = require('../src/Hub/Recommendation/RuleGenerator'),
       SensorSimilarityRanking = require('../src/Hub/Recommendation/SensorSimilarityRanking'),
       InstallationFactory = require('./InstallationFactory');
@@ -10,12 +10,14 @@ describe('ranking rules by sensor similarity', () => {
     it('ranks rules from meeting room higher than from garage', (done) => {
       let meetingRoom = new InstallationFactory();
       meetingRoom.sensortag('Meeting room', (tag) => { tag.meetingRoom(); });
+      meetingRoom.sensortag('Meeting room', (tag) => { tag.meetingRoom(); });
       let meetingRoomRuleType = meetingRoom.rule((rule) => {
         rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Meeting room');
         rule.actionInLocation('Buzzer', 'Meeting room');
       }).typeId;
 
       let garage = new InstallationFactory();
+      garage.sensortag('Garage', (tag) => { tag.garageInWinter(); });
       garage.sensortag('Garage', (tag) => { tag.garageInWinter(); });
       let garageRuleType = garage.rule((rule) => {
         rule.sensorConditionInLocation('Lux', 'GT', 0, 'Garage');
@@ -28,8 +30,8 @@ describe('ranking rules by sensor similarity', () => {
       rankRules([ meetingRoom, garage ], livingRoom, (rules, ranks) => {
         expect(rules.length).to.equal(2);
 
-        let meetingRuleRank = ranks[meetingRoomRuleType];
-        let garageRuleRank = ranks[garageRuleType];
+        let meetingRuleRank = ranks[meetingRoomRuleType].rank;
+        let garageRuleRank = ranks[garageRuleType].rank;
 
         expect(meetingRuleRank).to.be.above(garageRuleRank);
 
@@ -60,8 +62,8 @@ describe('ranking rules by sensor similarity', () => {
       rankRules([ meetingRoom, garage ], livingRoom, (rules, ranks) => {
         expect(rules.length).to.equal(2);
 
-        let meetingRuleRank = ranks[meetingRoomRuleType];
-        let garageRuleRank = ranks[garageRuleType];
+        let meetingRuleRank = ranks[meetingRoomRuleType].rank;
+        let garageRuleRank = ranks[garageRuleType].rank;
 
         expect(meetingRuleRank).to.be.above(garageRuleRank);
 
@@ -100,8 +102,8 @@ describe('ranking rules by sensor similarity', () => {
       rankRules([ meetingRoom, garage ], livingRoom, (rules, ranks) => {
         expect(rules.length).to.equal(2);
 
-        let meetingRuleRank = ranks[meetingRoomRuleType];
-        let garageRuleRank = ranks[garageRuleType];
+        let meetingRuleRank = ranks[meetingRoomRuleType].rank;
+        let garageRuleRank = ranks[garageRuleType].rank;
 
         expect(meetingRuleRank).to.be.above(garageRuleRank);
 
@@ -137,8 +139,8 @@ describe('ranking rules by sensor similarity', () => {
       rankRules([ meetingRoom, garage, outside ], livingRoom, (rules, ranks) => {
         expect(meetingRoomRuleType).to.equal(outsideRuleType);
 
-        let meetingRuleRank = ranks[meetingRoomRuleType];
-        let garageRuleRank = ranks[garageRuleType];
+        let meetingRuleRank = ranks[meetingRoomRuleType].rank;
+        let garageRuleRank = ranks[garageRuleType].rank;
 
         expect(meetingRuleRank).to.be.above(garageRuleRank);
 

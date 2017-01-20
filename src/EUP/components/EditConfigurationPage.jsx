@@ -46,6 +46,9 @@ var EditConfigurationPage = React.createClass({
 
   _handleAddHub: function () {
     var state = this.state;
+    if (!state.data.hubs) {
+      state.data.hubs = [];
+    }
     state.data.hubs.push({ uri: 'http://' });
     this.setState(state);
   },

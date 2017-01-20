@@ -23,6 +23,11 @@ class ConditionOrAction {
     if (this.data.recommendedVirtualSensor) {
       return new VirtualSensor(this.data.recommendedVirtualSensor, this._model);
     }
+    if (this.data.recommendedVirtualSensorId && this._model) {
+      return this._model.recommendedVirtualSensors.find((virtualSensor) => {
+        return virtualSensor.id == this.data.recommendedVirtualSensorId;
+      });
+    }
   }
 
   set attributes(data) { this.data.attributes = data; }
@@ -32,11 +37,14 @@ class ConditionOrAction {
   set location(location) { this.data.locationName = location.name; }
   set device(device) { this.data.deviceId = device.id; }
   set virtualSensor(virtualSensor) {
+    this.data.recommendedVirtualSensorId = undefined;
+    this.data.recommendedVirtualSensor = undefined;
     this.data.virtualSensorId = virtualSensor.id;
     this.location = virtualSensor.location;
   }
   set recommendedVirtualSensor(virtualSensor) {
     this.data.recommendedVirtualSensor = virtualSensor.toData();
+    this.location = virtualSensor.location;
   }
 
   addRequiredAttribute(att) {
@@ -122,13 +130,15 @@ class ConditionOrAction {
   describeAttributes() { return this.labels.describeAttributes(); }
 
   hasChosenService() {
-    return this.data.sensorType || this.data.actionType || this.data.virtualSensorId;
+    return (this.data.sensorType || this.data.actionType || this.virtualSensor) ? true : false;
   }
   hasLocation() { return this.data.locationName ? true : false; }
   requiresSensor() { return this.data.sensorType ? true : false; }
   requiresDevice() { return this.data.deviceId ? true : false; }
   requiresReferencedVirtualSensor() { return this.data.virtualSensorId ? true : false; }
-  requiresRecommendedVirtualSensor() { return this.data.recommendedVirtualSensor ? true : false; }
+  requiresRecommendedVirtualSensor() {
+    return (this.data.recommendedVirtualSensor || this.data.recommendedVirtualSensorId) ? true : false;
+  }
   requiresVirtualSensor() { return this.requiresReferencedVirtualSensor() || this.requiresRecommendedVirtualSensor(); }
   requiresAction() { return this.data.actionType ? true : false; }
 

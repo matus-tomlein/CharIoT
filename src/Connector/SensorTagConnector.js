@@ -48,21 +48,21 @@ SensorTagConnector.prototype = (function () {
     var api = searcher.api;
     var building = searcher.building;
 
-    var sensorTypes = [
-      'Temperature',
-      'Humidity',
-      'Lux',
-      'Pressure'
-        // 'Accelerometer X',
-        // 'Accelerometer Y',
-        // 'Accelerometer Z',
-        // 'Gyrometer X',
-        // 'Gyrometer Y',
-        // 'Gyrometer Z',
-        // 'Magnetometer X',
-        // 'Magnetometer Y',
-        // 'Magnetometer Z'
-    ];
+    var sensorTypes = {
+      Temperature: { min: -50, max: 50 },
+      Humidity: { min: 0, max: 100 },
+      Lux: { min: 0, max: 600 },
+      Pressure: { min: 0, max: 200 }
+      // 'Accelerometer X',
+      // 'Accelerometer Y',
+      // 'Accelerometer Z',
+      // 'Gyrometer X',
+      // 'Gyrometer Y',
+      // 'Gyrometer Z',
+      // 'Magnetometer X',
+      // 'Magnetometer Y',
+      // 'Magnetometer Z'
+    };
 
     createSensorForDevice(api, tag, building, (err, deviceUuid, deviceName) => {
       if (err) {
@@ -72,7 +72,7 @@ SensorTagConnector.prototype = (function () {
 
       console.log(deviceUuid, deviceName, building);
 
-      async.map(sensorTypes, function(type, done) {
+      async.map(Object.keys(sensorTypes), function(type, done) {
         var name = deviceName + '-' + type;
         var identifier = tag.id + '_' + type.replace(/\s+/g, '-').toLowerCase();
         console.log(name, building, identifier);
@@ -86,6 +86,8 @@ SensorTagConnector.prototype = (function () {
 
               api.addSensorMetadata(uuid, {
                 'Senses': type,
+                'MinValue': sensorTypes[type].min,
+                'MaxValue': sensorTypes[type].max,
                 'DeviceUuid': deviceUuid,
                 'TagId': tag.id
               }, function (err) {
@@ -102,7 +104,7 @@ SensorTagConnector.prototype = (function () {
           callback(err);
         } else {
           var uuidsMap = {};
-          sensorTypes.forEach(function (type, i) {
+          Object.keys(sensorTypes).forEach(function (type, i) {
             uuidsMap[type] = uuids[i];
           });
 

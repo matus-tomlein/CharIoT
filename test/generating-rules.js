@@ -1,6 +1,6 @@
 /* global describe it */
 const expect = require('chai').expect,
-      Repository = require('../src/Hub/Recommendation/Repository'),
+      Repository = require('../src/Hub/Repository'),
       RuleGenerator = require('../src/Hub/Recommendation/RuleGenerator'),
       factory = require('./factory');
 
