@@ -39,7 +39,8 @@ class Model {
     this.data.userId = this.data.userId || generateId();
   }
 
-  set building(building) { this.state.giotto = building.data; }
+  set building(building) { this.data.giotto = building.data; }
+  set credentials(credentials) { this.data.credentials = credentials; }
 
   get id() { return this.data.userId || generateId(); }
   get building() { return new Building(this.data.giotto); }
@@ -47,6 +48,7 @@ class Model {
   get locations() { return this.building.locations; }
   get sensors() { return this.building.sensors; }
   get actions() { return this.building.actions; }
+  get credentials() { return this.data.credentials; }
 
   get virtualSensors() {
     return wrap(this.data.input.virtualSensors, VirtualSensor, this);

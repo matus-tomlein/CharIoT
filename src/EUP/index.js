@@ -17,6 +17,28 @@ main.initialize((err) => {
 
   jsx.install();
 
+
+
+
+
+  // api/login
+
+  a.post('/api/login', (req, res) => {
+    main.login(req.body, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).end();
+      } else {
+        res.end('OK');
+      }
+    });
+  });
+
+
+
+
+  // api/refresh
+
   a.get('/api/refresh', function (req, res) {
     main.refresh((err) => {
       if (err) {
@@ -28,7 +50,10 @@ main.initialize((err) => {
     });
   });
 
-  a.get('/api/data', (_, r) => { r.json(main.settings.data); });
+  a.get('/api/data', (_, r) => {
+    r.json(main.settings.data);
+  });
+
   a.get('/api/time', (_, r) => { r.end('' + (new Date().getTime() / 1000)); });
 
   a.post('/api/input/:key', function (req, res) {

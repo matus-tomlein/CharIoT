@@ -2,6 +2,7 @@ var React = require('react'),
     ReactDOM = require('react-dom'),
 
     RefreshPage = require('./RefreshPage.jsx'),
+    LoginPage = require('./LoginPage.jsx'),
     EditConfigurationPage = require('./EditConfigurationPage.jsx'),
     ExplorePage = require('./ExplorePage.jsx'),
     IFTTTPage = require('./IFTTTPage.jsx'),
@@ -31,6 +32,7 @@ class Application extends React.Component {
     return <div>
       <Router history={browserHistory}>
         <Route path="/" component={OverviewPage} />
+        <Route path="/login" component={LoginPage}/>
         <Route path="/configure" component={EditConfigurationPage}/>
         <Route path="/refresh" component={RefreshPage}/>
         <Route path="/explore" component={ExplorePage}/>

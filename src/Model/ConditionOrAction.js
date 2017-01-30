@@ -59,7 +59,7 @@ class ConditionOrAction {
   sensors() {
     let location = this.location;
     if (location) {
-      return _.flatten(location.sensors().filter((locationSensor) => {
+      return _.flatten(location.sensors.filter((locationSensor) => {
         return locationSensor.name == this.sensorType;
       }).map((locationSensor) => {
         return locationSensor.sensors();
@@ -79,7 +79,7 @@ class ConditionOrAction {
   devicesWithAction() {
     let location = this.location;
     if (location) {
-      return _.flatten(location.actions().filter((locationAction) => {
+      return _.flatten(location.actions.filter((locationAction) => {
         return locationAction.name == this.actionType;
       }).map((locationAction) => {
         return locationAction.devices;

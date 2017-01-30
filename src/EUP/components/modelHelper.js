@@ -1,9 +1,14 @@
 var Model = require('../Model'),
+    browserHistory = require('react-router').browserHistory,
     $ = require('jquery');
 
 function fetchData(callback) {
   $.get('/api/data', function (data) {
-    callback(null, data);
+    if (data.credentials) {
+      callback(null, data);
+    } else {
+      browserHistory.push('/login');
+    }
   });
 }
 

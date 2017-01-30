@@ -1,18 +1,20 @@
-var HubReporter = require('./HubReporter'),
-    Model = require('./Model'),
-    Runtime = require('./Runtime'),
+const GIoTTOApi = require('../../../giotto-api'),
+      HubReporter = require('./HubReporter'),
+      Model = require('./Model'),
+      Runtime = require('./Runtime'),
 
-    Settings = require('../Helpers').Settings;
+      Settings = require('../Helpers').Settings;
 
 class Main {
   constructor() {
     var blankData = Model.blankData;
     blankData.userId = Math.random().toString(36);
     this.settings = new Settings(__dirname + '/' + this.sessionName + '.json', blankData);
-    this.giottoApi = require('../api');
   }
 
   get model() { return new Model(this.settings.data); }
+  get credentials() { return this.model.credentials; }
+  get isLoggedIn() { return this.giottoApi; }
 
   get sessionName() {
     var sessionName = 'default';
@@ -27,26 +29,48 @@ class Main {
       this.settings.save((err) => {
         if (err) { callback(err); return; }
 
-        this.giottoApi.authenticate((err) => {
-          if (err) { callback(err); return; }
+        if (this.credentials) {
+          this._login(callback);
+        } else {
+          callback();
+        }
+      });
+    });
+  }
 
-          this.runtime = new Runtime(this.giottoApi);
-          if (err) { callback(err); return; }
+  login(giottoCredentials, callback) {
+    console.log('logging in', giottoCredentials);
+    this.model.credentials = giottoCredentials;
+    this.settings.save((err) => {
+      if (err) { console.log(err); return; }
+      this._login(callback);
+    });
+  }
 
-          this.refresh((err) => {
-            if (err) { callback(err); return; }
+  _login(callback) {
+    let api = new GIoTTOApi(this.credentials);
 
-            callback();
-          });
-        });
+    api.authenticate((err) => {
+      if (err) { callback(err); return; }
+
+      this.giottoApi = api;
+
+      this.runtime = new Runtime(this.giottoApi);
+      if (err) { callback(err); return; }
+
+      this.refresh((err) => {
+        if (err) { callback(err); return; }
+
+        callback();
       });
     });
   }
 
   refresh(callback) {
+    if (!this.isLoggedIn) { callback('Not logged in'); return; }
     if (this.runtime) this.runtime.reset();
 
-    this.giottoApi.getBuildingModel('My Home', (err, building) => {
+    this.giottoApi.getBuildingModel(this.credentials.building, (err, building) => {
       if (err) { callback(err); return; }
 
       this.settings.giotto = building.data;
