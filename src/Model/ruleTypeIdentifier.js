@@ -1,7 +1,7 @@
 const hash = require('object-hash'),
       _ = require('underscore');
 
-function conditionValues(condition) {
+function conditionValues(condition, includeAttributes) {
   let values = {};
 
   values.hasLocation = condition.hasLocation();
@@ -20,20 +20,23 @@ function conditionValues(condition) {
       sensors: _.sortBy(virtualSensor.sensors)
     };
   }
-  // values.attributes = condition.attributes;
+
+  if (includeAttributes) {
+    values.attributes = condition.attributes;
+  }
 
   return values;
 }
 
-module.exports = (rule) => {
+module.exports = (rule, includeAttributes) => {
   let values = {};
 
   values.conditions = _.sortBy(rule.conditions.map((condition) => {
-    return hash(conditionValues(condition));
+    return hash(conditionValues(condition, includeAttributes));
   }));
 
   values.actions = _.sortBy(rule.actions.map((action) => {
-    return hash(conditionValues(action));
+    return hash(conditionValues(action, includeAttributes));
   }));
 
   return hash(values);

@@ -38,8 +38,8 @@ function recommendRules(repositoryInstallations, installation, callback) {
   repository.addInstallationDataModel(installation.dataModel);
 
   let recommendationService = new RecommendationService(installation.model, repository);
-  recommendationService.recommendRules((err, rules) => {
+  recommendationService.recommendRules((err, recommendations) => {
     expect(err).not.to.be.ok;
-    callback(rules);
+    callback(recommendations.rulesBySensorSimilarity);
   });
 }

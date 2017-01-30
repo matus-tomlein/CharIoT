@@ -38,7 +38,7 @@ module.exports = (model, filters, graphParams) => {
         } else {
           var sensor;
           if (location) {
-            sensor = location.sensors().find((sensor) => {
+            sensor = location.sensors.find((sensor) => {
               return sensor.name == condition.data.sensorType;
             });
           } else if (device) {
@@ -69,7 +69,7 @@ module.exports = (model, filters, graphParams) => {
         if (location) {
           locationIds.push(location.id);
 
-          action = location.actions().find((action) => {
+          action = location.actions.find((action) => {
             return action.name == ruleAction.data.actionType;
           });
         } else if (device) {

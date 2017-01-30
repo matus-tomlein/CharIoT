@@ -1,5 +1,4 @@
-var GIoTTOInitializer = require('./GIoTTOInitializer'),
-    HubReporter = require('./HubReporter'),
+var HubReporter = require('./HubReporter'),
     Model = require('./Model'),
     Runtime = require('./Runtime'),
 
@@ -24,9 +23,7 @@ class Main {
   }
 
   initialize(callback) {
-    this.settings.load((err) => {
-      if (err) { callback(err); return; }
-
+    this.settings.load(() => {
       this.settings.save((err) => {
         if (err) { callback(err); return; }
 
@@ -49,9 +46,10 @@ class Main {
   refresh(callback) {
     if (this.runtime) this.runtime.reset();
 
-    var giottoInitializer = new GIoTTOInitializer(this.giottoApi, this.settings);
-    giottoInitializer.initialize((err) => {
+    this.giottoApi.getBuildingModel('My Home', (err, building) => {
       if (err) { callback(err); return; }
+
+      this.settings.giotto = building.data;
 
       if (this.runtime) this.runtime.start(this.model);
 

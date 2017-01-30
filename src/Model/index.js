@@ -1,9 +1,12 @@
 const _ = require('underscore');
 
 const Rule = require('./Rule'),
-      Device = require('./Device'),
       VirtualSensor = require('./VirtualSensor'),
-      Location = require('./Location'),
+      Recommendations = require('./Recommendations'),
+      SensorData = require('./SensorData'),
+
+      model = require('chariot-model'),
+      Building = model.Building,
 
       generateId = require('./generateId');
 
@@ -36,30 +39,21 @@ class Model {
     this.data.userId = this.data.userId || generateId();
   }
 
+  set building(building) { this.state.giotto = building.data; }
+
   get id() { return this.data.userId || generateId(); }
-
-  addDevice(device) {
-    this.data.giotto.devices.push(device.toData());
-  }
-
-  addRule(rule) {
-    this.data.input.rules.push(rule.toData());
-  }
-
-  addVirtualSensor(virtualSensor) {
-    this.data.input.virtualSensors.push(virtualSensor.toData());
-  }
-
-  get devices() {
-    return wrap(this.data.giotto.devices, Device, this);
-  }
+  get building() { return new Building(this.data.giotto); }
+  get devices() { return this.building.devices; }
+  get locations() { return this.building.locations; }
+  get sensors() { return this.building.sensors; }
+  get actions() { return this.building.actions; }
 
   get virtualSensors() {
     return wrap(this.data.input.virtualSensors, VirtualSensor, this);
   }
 
   get recommendedVirtualSensors() {
-    return wrap(this.data.recommended.virtualSensors, VirtualSensor, this);
+    return this.recommendations.virtualSensors;
   }
 
   get rules() {
@@ -67,31 +61,7 @@ class Model {
   }
 
   get allRecommenedRules() {
-    return wrap(this.data.recommended.rules, Rule, this);
-  }
-
-  get locations() {
-    var names = this.devices.map((device) => {
-      return device.locations.map((l) => { return l.name; });
-    });
-
-    return _.uniq(_.flatten(names)).map((name) => {
-      return new Location(name, this);
-    });
-  }
-
-  get sensors() {
-    var sensors = this.devices.map((device) => {
-      return device.sensors;
-    });
-    return _.flatten(sensors);
-  }
-
-  get actions() {
-    var actions = this.devices.map((device) => {
-      return device.actions;
-    });
-    return _.flatten(actions);
+    return this.recommendations.rulesBySensorSimilarity;
   }
 
   get recommendedRules() {
@@ -119,6 +89,28 @@ class Model {
     }
 
     return filteredRules;
+  }
+
+  get recommendations() {
+    return new Recommendations(this.data.recommended, this);
+  }
+
+  locationFor(locationName) {
+    return new Location({ name: locationName }, this.building);
+  }
+
+  sensorDataFor(sensor) {
+    return new SensorData(sensor, this);
+  }
+
+  addDevice(device) { this.building.addDevice(device); }
+
+  addRule(rule) {
+    this.data.input.rules.push(rule.toData());
+  }
+
+  addVirtualSensor(virtualSensor) {
+    this.data.input.virtualSensors.push(virtualSensor.toData());
   }
 }
 

@@ -19,7 +19,7 @@ function conditionServices(model) {
   });
 
   model.locations.forEach((location) => {
-    location.sensors().forEach((sensor) => {
+    location.sensors.forEach((sensor) => {
       var condition = new ConditionOrAction({}, model);
       condition.sensorType = sensor.name;
       condition.location = location;

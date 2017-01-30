@@ -41,6 +41,18 @@ class Rule {
     }).filter((location) => { return location; })));
   }
 
+  usedDevices() {
+    let conditionDevices = this.conditions.map((condition) => {
+      return condition.device;
+    }).filter((d) => { return d; });
+
+    let actionDevices = this.actions.map((action) => {
+      return action.device;
+    }).filter((d) => { return d; });
+
+    return conditionDevices.concat(actionDevices);
+  }
+
   sensorTypes() {
     return _.uniq(this.conditions.map((condition) => {
       return condition.data.sensorType;
@@ -58,6 +70,10 @@ class Rule {
 
   get typeId() {
     return ruleTypeIdentifier(this);
+  }
+
+  get typeIdWithAttributes() {
+    return ruleTypeIdentifier(this, true);
   }
 
   toData() {

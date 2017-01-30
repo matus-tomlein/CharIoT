@@ -1,5 +1,4 @@
-const Location = require('../../src/Model/Location'),
-      Rule = require('../../src/Model/Rule'),
+const Rule = require('../../src/Model/Rule'),
       ConditionOrAction = require('../../src/Model/ConditionOrAction');
 
 class RuleFactory {
@@ -19,7 +18,7 @@ class RuleFactory {
   sensorConditionInLocation(sensorName, operator, value, location) {
     let condition = new ConditionOrAction({}, this.model);
     condition.sensorType = sensorName;
-    condition.location = new Location(location, this.model);
+    condition.location = this.model.locationFor(location);
     condition.initializer().addNumericConditionAttribute(operator, value);
     this.rule.addCondition(condition);
   }
@@ -34,7 +33,7 @@ class RuleFactory {
   actionInLocation(actionName, location) {
     let action = new ConditionOrAction({}, this.model);
     action.actionType = actionName;
-    action.location = new Location(location, this.model);
+    action.location = this.model.locationFor(location);
     action.initializer().addLocationScopeAttribute();
     this.rule.addAction(action);
   }

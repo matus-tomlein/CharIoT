@@ -27,13 +27,12 @@ app.post('/', function (req, res) {
   repository.addInstallationDataModel(dataModel);
 
   let recommendationService = new RecommendationService(model, repository);
-  recommendationService.recommendRules((err, rules) => {
+  recommendationService.recommendRules((err, recommendations) => {
     if (err) {
       console.error(err);
       res.status(500).end();
     } else {
-      rules = rules.map((rule) => { return rule.toData(); });
-      res.json({ rules: rules });
+      res.json(recommendations.toData());
     }
   });
 

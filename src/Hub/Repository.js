@@ -1,5 +1,6 @@
 const _ = require('underscore'),
 
+      RelatedRules = require('./Recommendation/RelatedRules'),
       Model = require('../Model'),
       DataModel = require('../DataModel');
 
@@ -7,6 +8,7 @@ class Repository {
   constructor() {
     this._installations = {};
     this._dataModels = {};
+    this.relatedRules = new RelatedRules();
   }
 
   get installations() {
@@ -24,6 +26,7 @@ class Repository {
   }
 
   addInstallation(installation) {
+    this.relatedRules.addRulesFromInstallation(installation);
     this._installations[installation.id] = JSON.stringify(installation.data);
   }
 

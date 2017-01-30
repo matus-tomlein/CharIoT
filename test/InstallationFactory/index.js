@@ -2,6 +2,9 @@ const _ = require('underscore'),
 
       Model = require('../../src/Model'),
       DataModel = require('../../src/DataModel'),
+      chariotModel = require('chariot-model'),
+      Device = chariotModel.Device,
+      Action = chariotModel.Action,
       SensortagDeviceFactory = require('./SensortagDeviceFactory'),
       VirtualSensorFactory = require('./VirtualSensorFactory'),
       RuleFactory = require('./RuleFactory');
@@ -21,6 +24,28 @@ class InstallationFactory {
     factory.save();
 
     return factory.device;
+  }
+
+  smartPlug(location) {
+    let device = new Device({ name: 'smart plug' }, this.model);
+
+    let action = new Action({ name: 'Trigger' }, device);
+    device.addAction(action);
+
+    device.addLocation(this.model.locationFor(location));
+    this.model.addDevice(device);
+    return device;
+  }
+
+  smartLights(location) {
+    let device = new Device({ name: 'smart lights' }, this.model);
+
+    let action = new Action({ name: 'Trigger' }, device);
+    device.addAction(action);
+
+    device.addLocation(this.model.locationFor(location));
+    this.model.addDevice(device);
+    return device;
   }
 
   virtualSensor(name, labels, callback) {

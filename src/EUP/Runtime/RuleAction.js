@@ -17,10 +17,10 @@ class RuleAction {
     devices.forEach((device) => {
       console.log('Executing action', this.messageQueue,
           actionName,
-          device.tagId);
+          device.id);
       this.api.publishToQueue(this.messageQueue,
           JSON.stringify({
-            deviceId: device.tagId,
+            deviceId: device.id,
             actionName: actionName
           }),
           (err) => {

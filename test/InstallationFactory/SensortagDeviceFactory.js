@@ -1,10 +1,10 @@
 const randgen = require('randgen'),
       rnorm = randgen.rnorm,
 
-      Device = require('../../src/Model/Device'),
-      Sensor = require('../../src/Model/Sensor'),
-      Action = require('../../src/Model/Action'),
-      Location = require('../../src/Model/Location');
+      chariotModel = require('chariot-model'),
+      Device = chariotModel.Device,
+      Sensor = chariotModel.Sensor,
+      Action = chariotModel.Action;
 
 class SensortagDeviceFactory {
   constructor(location, model, installationFactory) {
@@ -25,7 +25,7 @@ class SensortagDeviceFactory {
       this.device.addAction(action);
     });
 
-    this.device.addLocation(new Location(location, model));
+    this.device.addLocation(model.locationFor(location));
 
     this.installation = installationFactory;
     this.model = model;

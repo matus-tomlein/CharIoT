@@ -1,7 +1,7 @@
 module.exports = (model, filters, graphParams) => {
   model.locations.forEach((l) => {
     if (filters.showSensors) {
-      l.sensors().forEach((s) => {
+      l.sensors.forEach((s) => {
         graphParams.nodes.push({
           id: s.id,
           icon: 'fa-thermometer-empty',
@@ -30,7 +30,7 @@ module.exports = (model, filters, graphParams) => {
     }
 
     if (filters.showActions) {
-      l.actions().forEach((a) => {
+      l.actions.forEach((a) => {
         graphParams.nodes.push({
           id: a.id,
           icon: 'fa-cog',

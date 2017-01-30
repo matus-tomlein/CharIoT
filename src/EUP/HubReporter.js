@@ -1,5 +1,4 @@
 const async = require('async'),
-      _ = require('underscore'),
       request = require('request'),
 
       DataModel = require('../DataModel'),
@@ -18,7 +17,10 @@ class HubReporter {
     this._createDataModel((err, dataModel) => {
       if (err) { callback(err); return; }
 
-      async.map(this.settings.data.configuration.hubs || [], (hub, done) => {
+      let hubs = this.settings.data.configuration.hubs;
+      if (hubs.length > 1) console.log('More than one hub. Only the first one is being used.');
+      if (hubs && hubs.length) {
+        let hub = hubs[0];
         var body = {
           id: this.settings.data.userId,
           devices: this.settings.data.giotto.devices,
@@ -32,28 +34,16 @@ class HubReporter {
           method: 'POST',
           json: body,
           forever: true
-        }, function (err, response, body) {
+        }, (err, response, recommendations) => {
           if (err) {
-            done(err);
+            callback(err);
           } else {
-            done(null, body.rules);
-          }
-        });
-      }, (err, rules) => {
-        if (err) {
-          callback(err);
-        } else {
-          rules = _.flatten(rules);
-          this._extractVirtualSensorsFromRules(rules, (rules, virtualSensors) => {
-            this.settings.data.recommended = {
-              rules: rules,
-              virtualSensors: virtualSensors
-            };
+            this.settings.data.recommended = recommendations;
             this.settings.save();
             callback();
-          });
-        }
-      });
+          }
+        });
+      }
     });
   }
 
@@ -62,8 +52,9 @@ class HubReporter {
     let dataModel = new DataModel(model);
 
     async.each(model.sensors, (sensor, done) => {
-      if (sensor.hasUpToDateFuzzySetData()) {
-        let data = sensor.fuzzySetData;
+      let sensorData = model.sensorDataFor(sensor);
+      if (sensorData.hasUpToDateFuzzySetData()) {
+        let data = sensorData.fuzzySetData;
         let fuzzySet = new FuzzySet(data);
         dataModel.addSensorFuzzySet(sensor, fuzzySet);
         done();
@@ -88,23 +79,6 @@ class HubReporter {
 
       callback(null, dataModel);
     });
-  }
-
-  _extractVirtualSensorsFromRules(rules, callback) {
-    let virtualSensors = [];
-    rules = rules.map((rule) => {
-      rule.conditions.forEach((condition) => {
-        if (condition.recommendedVirtualSensor) {
-          let virtualSensor = condition.recommendedVirtualSensor;
-          virtualSensors.push(virtualSensor);
-          condition.recommendedVirtualSensor = undefined;
-          condition.recommendedVirtualSensorId = virtualSensor.id;
-        }
-      });
-      return rule;
-    });
-
-    callback(rules, virtualSensors);
   }
 }
 

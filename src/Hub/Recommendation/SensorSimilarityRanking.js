@@ -10,7 +10,7 @@ class SensorSimilarityRanking {
     let ranksByType = {};
     this.rules.forEach((rule) => {
       let installationId = rule.model.id;
-      let relatedRules = this._allOtherRulesWithType(rule.typeId, installationId);
+      let relatedRules = this._allOtherRulesWithType(rule, installationId);
       if (relatedRules.length) {
         let ranks = relatedRules.map((relatedRule) => {
           return this._rankSimilarityOfRule(rule, relatedRule);
@@ -18,7 +18,7 @@ class SensorSimilarityRanking {
 
         let rank = _.max(ranks);
         if (ranksByType[rule.typeId]) {
-          if (rank > ranksByType) {
+          if (rank > ranksByType[rule.typeId].rank) {
             ranksByType[rule.typeId] = {
               rank: rank,
               ruleId: rule.id
@@ -36,12 +36,13 @@ class SensorSimilarityRanking {
     callback(null, ranksByType);
   }
 
-  _allOtherRulesWithType(type, exceptInstallationId) {
+  _allOtherRulesWithType(ofRule, exceptInstallationId) {
+    let type = ofRule.typeIdWithAttributes;
     return _.flatten(this.repository.installations.filter((installation) => {
       return installation.id != exceptInstallationId;
     }).map((installation) => {
       return installation.rules.filter((rule) => {
-        return rule.typeId == type;
+        return rule.typeIdWithAttributes == type;
       });
     }));
   }

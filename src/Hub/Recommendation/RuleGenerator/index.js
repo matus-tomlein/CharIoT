@@ -9,7 +9,6 @@ const Ontology = require('./Ontology'),
       OntologyBuilder = require('./OntologyBuilder'),
       Rule = require('../../../Model/Rule'),
       VirtualSensor = require('../../../Model/VirtualSensor'),
-      Location = require('../../../Model/Location'),
       ConditionOrAction = require('../../../Model/ConditionOrAction');
 
 class RuleGenerator {
@@ -90,8 +89,9 @@ class RuleGenerator {
       let locationEntities = conditionEntity.references.location;
       locationEntities.forEach((locationEntity) => {
         locationEntity.load();
-        condition.location = new Location(locationEntity.literals.name,
-              this.installation);
+        condition.location = this.installation.locations.find((l) => {
+          return l.name == locationEntity.literals.name;
+        });
       });
     }
 

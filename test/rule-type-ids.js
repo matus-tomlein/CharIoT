@@ -75,30 +75,6 @@ describe('rule type identifiers', () => {
     expect(id1).not.to.eq(id2);
   });
 
-  // it('are different for rules with different sensor conditions', () => {
-  //   let id1, id2;
-  //
-  //   factory((inst) => {
-  //     inst.sensortag('Living room');
-  //     let rule = inst.rule((rule) => {
-  //       rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Living room');
-  //       rule.actionInLocation('Buzzer', 'Living room');
-  //     });
-  //     id1 = rule.typeId;
-  //   });
-  //
-  //   factory((inst) => {
-  //     inst.sensortag('Bedroom');
-  //     let rule = inst.rule((rule) => {
-  //       rule.sensorConditionInLocation('Temperature', 'LT', 1, 'Bedroom');
-  //       rule.actionInLocation('Buzzer', 'Living room');
-  //     });
-  //     id2 = rule.typeId;
-  //   });
-  //
-  //   expect(id1).not.to.eq(id2);
-  // });
-
   it('are the same for rules with similar virtual sensors', () => {
     let id1, id2;
 
@@ -226,4 +202,29 @@ describe('rule type identifiers', () => {
 
     expect(id1).to.eq(id2);
   });
+
+  it('can also generate a type identifier that cares about the attributes ', () => {
+    let id1, id2;
+
+    factory((inst) => {
+      inst.sensortag('Living room');
+      let rule = inst.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Living room');
+        rule.actionInLocation('Buzzer', 'Living room');
+      });
+      id1 = rule.typeIdWithAttributes;
+    });
+
+    factory((inst) => {
+      inst.sensortag('Bedroom');
+      let rule = inst.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'LT', 1, 'Bedroom');
+        rule.actionInLocation('Buzzer', 'Living room');
+      });
+      id2 = rule.typeIdWithAttributes;
+    });
+
+    expect(id1).not.to.eq(id2);
+  });
+
 });

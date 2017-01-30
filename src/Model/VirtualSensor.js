@@ -31,7 +31,7 @@ class VirtualSensor {
 
   sensorsByType() {
     var sensorsByType = {};
-    var sensorsInLocation = this.location.sensors();
+    var sensorsInLocation = this.location.sensors;
 
     this.sensors.forEach((sensorType) => {
       var locationSensor = sensorsInLocation.find((sensor) => {

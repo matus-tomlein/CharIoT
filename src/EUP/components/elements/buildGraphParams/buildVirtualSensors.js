@@ -20,7 +20,7 @@ module.exports = (model, filters, graphParams) => {
           in: location.id
         });
 
-        location.sensors().forEach((sensor) => {
+        location.sensors.forEach((sensor) => {
           if (!vs.sensors.includes(sensor.name)) return;
 
           graphParams.edges.push({

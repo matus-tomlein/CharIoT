@@ -5,7 +5,7 @@ function actionServices(model) {
   var actions = [];
 
   model.locations.forEach((location) => {
-    location.actions().forEach((action) => {
+    location.actions.forEach((action) => {
       var condition = new ConditionOrAction({}, model);
       condition.actionType = action.name;
       condition.location = location;

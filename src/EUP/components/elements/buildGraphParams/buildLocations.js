@@ -19,7 +19,7 @@ module.exports = (model, filters, graphParams) => {
         in: l.id
       });
 
-      l.devices().forEach((p) => {
+      l.devices.forEach((p) => {
         graphParams.placements.push({
           of: p.id,
           in: l.id

@@ -111,7 +111,7 @@ describe('ranking rules by sensor similarity', () => {
       });
     });
 
-    it('gives rank based on meeting room, not outside', (done) => {
+    it('if a rule is in both, gives rank based on meeting room, not outside', (done) => {
       let meetingRoom = new InstallationFactory();
       meetingRoom.sensortag('Meeting room', (tag) => { tag.meetingRoom(); });
       let meetingRoomRuleType = meetingRoom.rule((rule) => {
@@ -143,6 +143,45 @@ describe('ranking rules by sensor similarity', () => {
         let garageRuleRank = ranks[garageRuleType].rank;
 
         expect(meetingRuleRank).to.be.above(garageRuleRank);
+
+        done();
+      });
+    });
+
+    it('if there are rules with the same type, but slightly different adaptations, recommends the one from the most similar location', (done) => {
+      let meetingRoom = new InstallationFactory();
+      meetingRoom.sensortag('Meeting room', (tag) => { tag.meetingRoom(); });
+      meetingRoom.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Meeting room');
+        rule.actionInLocation('Buzzer', 'Meeting room');
+      });
+
+      let outside = new InstallationFactory();
+      outside.sensortag('Outside', (tag) => { tag.outsideInWinter(); });
+      outside.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'GT', -1, 'Outside');
+        rule.actionInLocation('Buzzer', 'Outside');
+      }).typeId;
+
+      let garage = new InstallationFactory();
+      garage.sensortag('Garage', (tag) => { tag.garageInWinter(); });
+      garage.rule((rule) => {
+        rule.sensorConditionInLocation('Temperature', 'GT', 0, 'Garage');
+        rule.actionInLocation('Buzzer', 'Garage');
+      });
+
+      let livingRoom = new InstallationFactory();
+      livingRoom.sensortag('Living room', (tag) => { tag.livingRoom(); });
+
+      rankRules([ outside, meetingRoom, garage ], livingRoom, (rules, ranks) => {
+        let rankTypes = Object.keys(ranks);
+        expect(rankTypes.length).to.equal(1);
+
+        let rule = rules.find((rule) => { return rule.id == ranks[rankTypes[0]].ruleId; });
+
+        let condition = rule.conditions[0];
+        let conditionValue = condition.attributes.condition.value;
+        expect(conditionValue).to.be.equal(20);
 
         done();
       });

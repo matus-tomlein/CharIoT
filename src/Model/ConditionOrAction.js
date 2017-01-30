@@ -1,5 +1,4 @@
 const _ = require('underscore'),
-      Location = require('./Location'),
       VirtualSensor = require('./VirtualSensor'),
       ConditionOrActionLabels = require('./ConditionOrActionLabels'),
       ConditionOrActionInitializer = require('./ConditionOrActionInitializer'),
@@ -109,7 +108,7 @@ class ConditionOrAction {
 
   get location() {
     if (this.data.locationName && this._model) {
-      return new Location(this.data.locationName, this._model);
+      return this._model.locations.find((l) => { return l.name == this.data.locationName; });
     }
   }
 
