@@ -1,5 +1,6 @@
 const React = require('react'),
       $ = require('jquery'),
+      _ = require('underscore'),
       browserHistory = require('react-router').browserHistory,
 
       Modal = require('../elements/Modal.jsx');
@@ -77,7 +78,7 @@ class NewVirtualSensorForm extends React.Component {
       var location = this.props.model.locations.find((l) => {
         return l.name == this.state.location;
       });
-      return location.sensors().map((sensor) => { return sensor.name; });
+      return location.sensors.map((sensor) => { return sensor.name; });
     }
     return [];
   }
@@ -86,7 +87,7 @@ class NewVirtualSensorForm extends React.Component {
     var locationOptions = this.props.model.locations.map((location) => {
       return <option value={location.id}>{location.name}</option>;
     });
-    var sensorTypes = this.sensorTypesInLocation().map((sensor) => {
+    var sensorTypes = _.sortBy(this.sensorTypesInLocation()).map((sensor) => {
       var checked = this.state.sensors.includes(sensor);
 
       return <label className='form-switch'>

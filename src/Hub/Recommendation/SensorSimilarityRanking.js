@@ -59,7 +59,7 @@ class SensorSimilarityRanking {
 
         let sensorsToFuzzySet = (sensors) => {
           let fuzzySets = sensors.map((sensor) => {
-            let dataModel = this.repository.dataModelWithId(sensor.model.id);
+            let dataModel = this.repository.dataModelWithId(sensor.building.id);
             return dataModel.sensorFuzzySet(sensor);
           }).filter((fs) => { return fs; });
           if (fuzzySets.length) {

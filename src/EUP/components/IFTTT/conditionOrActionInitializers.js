@@ -7,6 +7,10 @@ module.exports = {
     condition.initializer().addLocationScopeAttribute();
   },
 
+  addActionOptionsAttribute: (condition, action) => {
+    condition.initializer().addActionOptionsAttribute(action);
+  },
+
   addVirtualSensorLabelAttribute: (condition, virtualSensor) => {
     condition.initializer().addVirtualSensorLabelAttribute(virtualSensor);
   }

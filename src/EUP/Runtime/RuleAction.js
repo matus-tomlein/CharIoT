@@ -1,3 +1,7 @@
+function getTime() {
+  return new Date().getTime() / 1000;
+}
+
 class RuleAction {
   constructor(action, api) {
     this.action = action;
@@ -15,17 +19,16 @@ class RuleAction {
     }
 
     devices.forEach((device) => {
-      console.log('Executing action', this.messageQueue,
-          actionName,
-          device.id);
-      this.api.publishToQueue(this.messageQueue,
-          JSON.stringify({
-            deviceId: device.id,
-            actionName: actionName
-          }),
-          (err) => {
-            if (err) console.error(err);
-          });
+      let action = device.actionFor(actionName);
+      if (action && action.uuid) {
+        console.log('Executing action', this.messageQueue, actionName, device.id);
+
+        let parameter = 1;
+        if (this.action.attributes.parameter) {
+          parameter = this.action.attributes.parameter;
+        }
+        this.api.postTimeseriesValue(action.uuid, getTime(), parameter);
+      }
     });
   }
 }

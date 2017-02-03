@@ -11,7 +11,10 @@ const Rule = require('./Rule'),
       generateId = require('./generateId');
 
 function wrap(items, wrappingClass, model) {
-  return items.map((i) => { return new wrappingClass(i, model); });
+  if (items) {
+    return items.map((i) => { return new wrappingClass(i, model); });
+  }
+  return [];
 }
 
 let blankData = {
@@ -42,7 +45,7 @@ class Model {
   set building(building) { this.data.giotto = building.data; }
   set credentials(credentials) { this.data.credentials = credentials; }
 
-  get id() { return this.data.userId || generateId(); }
+  get id() { return this.building.id; }
   get building() { return new Building(this.data.giotto); }
   get devices() { return this.building.devices; }
   get locations() { return this.building.locations; }
@@ -108,10 +111,12 @@ class Model {
   addDevice(device) { this.building.addDevice(device); }
 
   addRule(rule) {
+    this.data.input.rules = this.data.input.rules || [];
     this.data.input.rules.push(rule.toData());
   }
 
   addVirtualSensor(virtualSensor) {
+    this.data.input.virtualSensors = this.data.input.virtualSensors || [];
     this.data.input.virtualSensors.push(virtualSensor.toData());
   }
 }

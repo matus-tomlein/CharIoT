@@ -73,7 +73,7 @@ class Main {
     this.giottoApi.getBuildingModel(this.credentials.building, (err, building) => {
       if (err) { callback(err); return; }
 
-      this.settings.giotto = building.data;
+      this.settings.data.giotto = JSON.parse(JSON.stringify(building.data));
 
       if (this.runtime) this.runtime.start(this.model);
 
@@ -81,8 +81,11 @@ class Main {
       hubReporter.report((err) => {
         if (err) { callback(err); return; }
 
-        this.settings.save();
-        callback();
+        this.settings.save((err) => {
+          if (err) { callback(err); return; }
+
+          callback();
+        });
       });
     });
   }

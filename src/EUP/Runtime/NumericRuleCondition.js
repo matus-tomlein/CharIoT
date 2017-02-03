@@ -8,7 +8,7 @@ class NumericRuleCondition {
 
   subscribedSensors() {
     return this.condition.sensors().map((sensor) => {
-      return sensor.id;
+      return sensor.uuid;
     });
   }
 

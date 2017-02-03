@@ -38,7 +38,7 @@ class RuleExecution {
       return condition.subscribedVirtualSensor;
     }).map(function (condition) {
       return condition.subscribedVirtualSensor();
-    });
+    }).filter((vs) => { return vs; });
   }
 
   isSatisfied() {

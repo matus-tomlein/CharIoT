@@ -26,6 +26,16 @@ class ConditionOrActionInitializer {
     this.condition.addAttribute('locationScope', 'all');
   }
 
+  addActionOptionsAttribute(action) {
+    let options = action.options;
+    this.condition.addRequiredAttribute({
+      name: 'parameter',
+      type: 'select',
+      options: options
+    });
+    this.condition.addAttribute('parameter', Object.keys(options)[0]);
+  }
+
   addVirtualSensorLabelAttribute(virtualSensor, selected) {
     let options = {};
     virtualSensor.labels.forEach((label) => {

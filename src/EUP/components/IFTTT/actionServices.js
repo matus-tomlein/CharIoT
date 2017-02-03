@@ -2,12 +2,21 @@ const ConditionOrAction = require('./ConditionOrAction'),
       initializers = require('./conditionOrActionInitializers');
 
 function actionServices(model) {
-  var actions = [];
+  let actions = [];
+
+  let create = (action) => {
+    let condition = new ConditionOrAction({}, model);
+    console.log(action);
+    condition.actionType = action.name;
+    if (action.options) {
+      initializers.addActionOptionsAttribute(condition, action);
+    }
+    return condition;
+  };
 
   model.locations.forEach((location) => {
     location.actions.forEach((action) => {
-      var condition = new ConditionOrAction({}, model);
-      condition.actionType = action.name;
+      let condition = create(action);
       condition.location = location;
       initializers.addLocationScopeAttribute(condition, location);
       actions.push(condition.data);
@@ -16,8 +25,7 @@ function actionServices(model) {
 
   model.devices.forEach((device) => {
     device.actions.forEach((action) => {
-      var condition = new ConditionOrAction({}, model);
-      condition.actionType = action.name;
+      let condition = create(action);
       condition.device = device;
       actions.push(condition.data);
     });

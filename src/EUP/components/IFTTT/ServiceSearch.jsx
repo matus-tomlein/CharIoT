@@ -1,5 +1,5 @@
 var React = require('react'),
-    _ = require('underscore'),
+    // _ = require('underscore'),
     ConditionOrAction= require('./ConditionOrAction');
 
 class ServiceSearch extends React.Component {
@@ -28,9 +28,9 @@ class ServiceSearch extends React.Component {
       });
     }
 
-    filteredServices = _.sortBy(filteredServices, (service) => {
-      return service.serviceNameWithSource;
-    });
+    // filteredServices = _.sortBy(filteredServices, (service) => {
+    //   return service.serviceNameWithSource;
+    // });
 
     var services = filteredServices.map((service) => {
       var onClick = () => {
@@ -68,7 +68,8 @@ class ServiceSearch extends React.Component {
           <div className='column col-sm-12 col-3'></div>
           <div className='column col-sm-12 col-6'>
             <div className="input-group input-inline">
-              <input className="form-input" type="text" onChange={this._handleSearch} placeholder="Search services" />
+              <input className="form-input" type="text" value={this.state.search}
+                onChange={this._handleSearch} placeholder="Search services" />
               <button className="btn btn-primary input-group-btn">Search</button>
             </div>
           </div>

@@ -3,6 +3,10 @@ var express = require('express'),
     jsx = require('node-jsx'),
     bodyParser = require('body-parser'),
     Rule = require('../Model/Rule'),
+    VirtualSensor = require('../Model/VirtualSensor'),
+
+    model = require('chariot-model'),
+    Device = model.Device,
 
     Main = require('./Main');
 
@@ -80,7 +84,8 @@ main.initialize((err) => {
   // api/virtualSensors
 
   a.post('/api/virtualSensors', function (req, res) {
-    main.settings.data.input.virtualSensors.push(req.body);
+    let vs = new VirtualSensor(req.body, model);
+    main.model.addVirtualSensor(vs);
     main.settings.save();
     res.end('OK');
   });
@@ -93,6 +98,7 @@ main.initialize((err) => {
 
     virtualSensor.trainSamples(main.giottoApi, (err) => {
       if (err) {
+        console.log(err);
         res.status(500).end();
       } else {
         main.settings.save();
@@ -124,32 +130,46 @@ main.initialize((err) => {
 
 
 
+  // /api/devices
+
+  a.post('/api/devices/:id', function (req, res) {
+    let model = main.model;
+    let device = new Device(req.body, model.building);
+
+    main.giottoApi.updateDevice(device, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).end();
+        return;
+      }
+
+      res.end('OK');
+    });
+  });
 
 
 
 
 
-  // api/services
 
-  a.get('/api/services/:id/trigger', function (req, res) {
-    var model = main.model;
-    var service = model.services.find(function (service) {
-      return service.uriHash == req.params.id;
+
+  // api/actions
+
+  a.get('/api/actions/:id/trigger', function (req, res) {
+    let model = main.model;
+    let action = model.actions.find((action) => {
+      return action.id == req.params.id;
     });
 
-    if (service) {
-      main.giottoApi.publishToQueue(service.messageQueue,
-          JSON.stringify({
-            deviceId: service.device.deviceId,
-            serviceName: service.serviceName
-          }),
-          function (err) {
-            if (err) res.status(404).end();
-            else res.end('OK');
-          });
-    } else {
-      res.status(404).end();
+    if (action && action.uuid) {
+      console.log('Executing action', this.messageQueue, action.name);
+
+      let parameter = 2;
+      let time = new Date().getTime() / 1000;
+      main.giottoApi.postTimeseriesValue(action.uuid, time, parameter);
     }
+
+    res.end('OK');
   });
 
 

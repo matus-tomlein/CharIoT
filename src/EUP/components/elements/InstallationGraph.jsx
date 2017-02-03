@@ -29,7 +29,7 @@ class InstallationGraph extends React.Component {
 
     if (this.state.device) {
       return <DeviceModal
-        {...this.state.device}
+        device={this.state.device}
         closeCallback={closeCallback} />;
     }
 
@@ -68,7 +68,7 @@ class InstallationGraph extends React.Component {
       });
 
       return <div>
-        <span className="text-bold">Show:</span>
+        <span className="text-bold">{this.props.model.building.name}:</span>
         <ul className="pagination">
           <Tag tag='Devices' active={this.state.showDevices} page={this} />
           <Tag tag='Sensors' active={this.state.showSensors} page={this} />
