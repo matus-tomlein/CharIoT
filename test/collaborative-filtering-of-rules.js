@@ -70,19 +70,19 @@ describe('collaborative filtering', () => {
       let garage = new InstallationFactory();
       garage.sensortag('Garage', (tag) => { tag.garageInWinter(); });
       garage.rule((rule) => {
-        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Meeting room');
-        rule.actionInLocation('Buzzer', 'Meeting room');
+        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Garage');
+        rule.actionInLocation('Buzzer', 'Garage');
       });
       garage.rule((rule) => {
-        rule.sensorConditionInLocation('Humidity', 'LT', 20, 'Meeting room');
-        rule.actionInLocation('Red LED', 'Meeting room');
+        rule.sensorConditionInLocation('Humidity', 'LT', 20, 'Garage');
+        rule.actionInLocation('Red LED', 'Garage');
       });
 
       let livingRoom = new InstallationFactory();
       livingRoom.sensortag('Living room', (tag) => { tag.livingRoom(); });
       let rule = livingRoom.rule((rule) => {
-        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Meeting room');
-        rule.actionInLocation('Buzzer', 'Meeting room');
+        rule.sensorConditionInLocation('Temperature', 'GT', 20, 'Living room');
+        rule.actionInLocation('Buzzer', 'Living room');
       });
 
       recommendForRule([ meetingRoom, garage ], livingRoom, rule, (rules) => {

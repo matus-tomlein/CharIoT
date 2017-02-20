@@ -2,7 +2,7 @@ var React = require('react'),
     $ = require('jquery'),
     browserHistory = require('react-router').browserHistory,
 
-    model = require('chariot-model'),
+    model = require('../../../chariotModel'),
     Location = model.Location,
 
     Modal = require('./Modal.jsx');

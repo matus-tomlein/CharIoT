@@ -1,21 +1,11 @@
-const _ = require('underscore');
-
-const Rule = require('./Rule'),
-      VirtualSensor = require('./VirtualSensor'),
-      Recommendations = require('./Recommendations'),
+const Recommendations = require('./Recommendations'),
       SensorData = require('./SensorData'),
 
-      model = require('chariot-model'),
+      model = require('../chariotModel'),
       Building = model.Building,
+      Location = model.Location,
 
       generateId = require('./generateId');
-
-function wrap(items, wrappingClass, model) {
-  if (items) {
-    return items.map((i) => { return new wrappingClass(i, model); });
-  }
-  return [];
-}
 
 let blankData = {
   configuration: {
@@ -26,8 +16,7 @@ let blankData = {
   },
   input: {
     rules: [],
-    properties: [],
-    virtualSensors: []
+    properties: []
   },
   recommended: {
     rules: []
@@ -52,48 +41,18 @@ class Model {
   get sensors() { return this.building.sensors; }
   get actions() { return this.building.actions; }
   get credentials() { return this.data.credentials; }
-
-  get virtualSensors() {
-    return wrap(this.data.input.virtualSensors, VirtualSensor, this);
-  }
+  get virtualSensors() { return this.building.virtualSensors; }
 
   get recommendedVirtualSensors() {
     return this.recommendations.virtualSensors;
   }
 
   get rules() {
-    return wrap(this.data.input.rules, Rule, this);
+    return this.building.rules;
   }
 
   get allRecommenedRules() {
     return this.recommendations.rulesBySensorSimilarity;
-  }
-
-  get recommendedRules() {
-    var filteredRules = this.allRecommenedRules;
-
-    if (this.filter.selectedLocations.length) {
-      var selectedLocations = this.filter.selectedLocations;
-      filteredRules = filteredRules.filter((rule) => {
-        return _.intersection(selectedLocations, rule.locationNames()).length > 0;
-      });
-    }
-
-    if (this.filter.selectedSensors.length) {
-      var selectedSensors = this.filter.selectedSensors;
-      filteredRules = filteredRules.filter((rule) => {
-        return _.intersection(selectedSensors, rule.sensorTypes()).length > 0;
-      });
-    }
-
-    if (this.filter.selectedActions.length) {
-      var selectedActions = this.filter.selectedActions;
-      filteredRules = filteredRules.filter((rule) => {
-        return _.intersection(selectedActions, rule.actionTypes()).length > 0;
-      });
-    }
-
-    return filteredRules;
   }
 
   get recommendations() {
@@ -111,13 +70,11 @@ class Model {
   addDevice(device) { this.building.addDevice(device); }
 
   addRule(rule) {
-    this.data.input.rules = this.data.input.rules || [];
-    this.data.input.rules.push(rule.toData());
+    this.building.addRule(rule);
   }
 
   addVirtualSensor(virtualSensor) {
-    this.data.input.virtualSensors = this.data.input.virtualSensors || [];
-    this.data.input.virtualSensors.push(virtualSensor.toData());
+    this.building.addVirtualSensor(virtualSensor);
   }
 }
 

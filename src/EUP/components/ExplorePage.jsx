@@ -1,10 +1,8 @@
 var React = require('react'),
-    _ = require('underscore'),
     browserHistory = require('react-router').browserHistory,
 
     elements = require('./elements'),
     Container = elements.Container,
-    Tag = elements.Tag,
 
     modelHelper = require('./modelHelper');
 
@@ -41,10 +39,7 @@ class ExplorePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: modelHelper.blankData,
-      selectedLocationTags: [],
-      selectedSensorTags: [],
-      selectedActionTags: []
+      data: modelHelper.blankData
     };
   }
 
@@ -56,72 +51,55 @@ class ExplorePage extends React.Component {
     });
   }
 
-  tagClicked(tag, enable, type) {
-    var state = this.state;
-    var key = 'selectedLocationTags';
-
-    if (type == 'sensor') key = 'selectedSensorTags';
-    else if (type == 'action') key = 'selectedActionTags';
-
-    if (enable) {
-      state[key].push(tag);
-    } else if (state[key].includes(tag)) {
-      state[key].splice(state[key].indexOf(tag), 1);
-    }
-    this.setState(state);
-  }
-
   render() {
-    var that = this;
-    var model = modelHelper.create(this.state.data, {
-      selectedLocations: this.state.selectedLocationTags,
-      selectedSensors: this.state.selectedSensorTags,
-      selectedActions: this.state.selectedActionTags
-    });
+    var model = modelHelper.create(this.state.data);
 
-    var allRules = model.allRecommenedRules;
-    var sensors = _.uniq(_.flatten(allRules.map((rule) => { return rule.sensorTypes(); })));
-    var actions = _.uniq(_.flatten(allRules.map((rule) => { return rule.actionTypes(); })));
-
-    var locationTags = model.locations.map((location) => {
-      var active = that.state.selectedLocationTags.includes(location.name);
-      return <Tag tag={location.name} active={active} page={that} type='location' />;
-    });
-
-    var sensorTags = sensors.map((sensor) => {
-      var active = that.state.selectedSensorTags.includes(sensor);
-      return <Tag tag={sensor} active={active} page={that} type='sensor' />;
-    });
-
-    var actionTags = actions.map((action) => {
-      var active = that.state.selectedActionTags.includes(action);
-      return <Tag tag={action} active={active} page={that} type='action' />;
-    });
-
-    var rules = model.recommendedRules.map((rule) => {
+    var rules = model.allRecommenedRules.map((rule) => {
       return <Rule rule={rule} />;
+    });
+
+    let relatedRules = [];
+    let recommendations = model.recommendations;
+    model.rules.forEach((rule) => {
+      let related = recommendations.rulesRelatedToRule(rule);
+      if (related.length) {
+        related = related.map((r) => { return <Rule rule={r} />; });
+
+        relatedRules.push(<div>
+          <h5>Since you installed: <i>{rule.name()}</i></h5>
+          <div className='columns'>
+            {related}
+          </div>
+        </div>);
+      }
+    });
+
+    let relatedRulesToDevices = [];
+    model.devices.forEach((device) => {
+      let related = recommendations.rulesRelatedToDevice(device);
+      if (related.length) {
+        related = related.map((r) => { return <Rule rule={r} />; });
+
+        relatedRulesToDevices.push(<div>
+          <h5>Since you have: <i>{device.name}</i></h5>
+          <div className='columns'>
+            {related}
+          </div>
+        </div>);
+      }
     });
 
     return (
       <Container location={this.props.location}>
-        <span className="text-bold">Locations:</span>
-        <ul className="pagination">
-          {locationTags}
-        </ul>
-
-        <span className="text-bold">Sensors:</span>
-        <ul className="pagination">
-          {sensorTags}
-        </ul>
-
-        <span className="text-bold">Actions:</span>
-        <ul className="pagination">
-          {actionTags}
-        </ul>
+        <h5>Recommendations from similar installations</h5>
 
         <div className='columns'>
           {rules}
         </div>
+
+        {relatedRules}
+
+        {relatedRulesToDevices}
       </Container>
       );
   }

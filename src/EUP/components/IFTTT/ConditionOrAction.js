@@ -1,1 +1,1 @@
-module.exports = require('../../../Model/ConditionOrAction');
+module.exports = require('../../../chariotModel').ConditionOrAction;

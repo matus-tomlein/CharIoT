@@ -14,15 +14,6 @@ function actionServices(model) {
     return condition;
   };
 
-  model.locations.forEach((location) => {
-    location.actions.forEach((action) => {
-      let condition = create(action);
-      condition.location = location;
-      initializers.addLocationScopeAttribute(condition, location);
-      actions.push(condition.data);
-    });
-  });
-
   model.devices.forEach((device) => {
     device.actions.forEach((action) => {
       let condition = create(action);

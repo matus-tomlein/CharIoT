@@ -8,7 +8,7 @@ var React = require('react'),
 
 function renderConditionOrAction(page, model, getServices, children) {
   var selectedItem = manageSelectedItem.get(page);
-  var conditionOrAction = new ConditionOrAction(selectedItem, model);
+  var conditionOrAction = new ConditionOrAction(selectedItem, model.building);
 
   if (!conditionOrAction.hasChosenService()) {
     var services = getServices(model);

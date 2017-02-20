@@ -1,7 +1,7 @@
 const randgen = require('randgen'),
       rnorm = randgen.rnorm,
 
-      chariotModel = require('chariot-model'),
+      chariotModel = require('../../src/chariotModel'),
       Device = chariotModel.Device,
       Sensor = chariotModel.Sensor,
       Action = chariotModel.Action;

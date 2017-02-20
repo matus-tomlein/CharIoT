@@ -2,11 +2,11 @@ var express = require('express'),
     _ = require('underscore'),
     jsx = require('node-jsx'),
     bodyParser = require('body-parser'),
-    Rule = require('../Model/Rule'),
-    VirtualSensor = require('../Model/VirtualSensor'),
 
-    model = require('chariot-model'),
+    model = require('../chariotModel'),
     Device = model.Device,
+    Rule = model.Rule,
+    VirtualSensor = model.VirtualSensor,
 
     Main = require('./Main');
 
@@ -84,49 +84,19 @@ main.initialize((err) => {
   // api/virtualSensors
 
   a.post('/api/virtualSensors', function (req, res) {
-    let vs = new VirtualSensor(req.body, model);
-    main.model.addVirtualSensor(vs);
-    main.settings.save();
-    res.end('OK');
-  });
-
-  a.get('/api/virtualSensors/:id/train', function (req, res) {
     let model = main.model;
-    let virtualSensor = model.virtualSensors.find(function (sensor) {
-      return sensor.id == req.params.id;
-    });
-
-    virtualSensor.trainSamples(main.giottoApi, (err) => {
+    let vs = new VirtualSensor(req.body, model.building);
+    main.giottoApi.createVirtualSensor(vs, (err) => {
       if (err) {
         console.log(err);
         res.status(500).end();
-      } else {
-        main.settings.save();
-        res.end('OK');
+        return;
       }
+
+      res.end('OK');
     });
   });
 
-  a.delete('/api/virtualSensors/:id', function (req, res) {
-    main.settings.data.input.virtualSensors = _.reject(
-        main.settings.data.input.virtualSensors,
-        function (virtualSensor) {
-          return virtualSensor.id == req.params.id;
-        });
-    main.settings.save();
-    res.end('OK');
-  });
-
-  a.post('/api/virtualSensors/:id/samples', function (req, res) {
-    let model = main.model;
-    let virtualSensor = model.virtualSensors.find(function (sensor) {
-      return sensor.id == req.params.id;
-    });
-
-    virtualSensor.addSample(req.body);
-    main.settings.save();
-    res.json(virtualSensor.toData());
-  });
 
 
 
@@ -192,20 +162,25 @@ main.initialize((err) => {
 
   a.post('/api/rules', function (req, res) {
     let model = main.model;
-    let rule = new Rule(req.body, model);
-
-    rule.conditions.forEach((condition) => {
-      if (condition.requiresRecommendedVirtualSensor()) {
-        let recommendedSensor = condition.recommendedVirtualSensor;
-
-        model.addVirtualSensor(recommendedSensor);
-        condition.virtualSensor = recommendedSensor;
+    let rule = new Rule(req.body, model.building);
+    main.giottoApi.createRule(rule, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).end();
+        return;
       }
-    });
-    model.addRule(rule);
 
-    main.settings.save();
-    res.end('OK');
+      res.end('OK');
+    });
+
+    // rule.conditions.forEach((condition) => {
+    //   if (condition.requiresRecommendedVirtualSensor()) {
+    //     let recommendedSensor = condition.recommendedVirtualSensor;
+    //
+    //     model.addVirtualSensor(recommendedSensor);
+    //     condition.virtualSensor = recommendedSensor;
+    //   }
+    // });
   });
 
   a.delete('/api/rules/:id', function (req, res) {

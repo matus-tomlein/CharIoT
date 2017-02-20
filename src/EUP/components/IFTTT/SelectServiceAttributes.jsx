@@ -7,7 +7,7 @@ class SelectServiceAttributes extends React.Component {
   }
 
   _handleChange(event) {
-    this.props.attributesChanged(this.props.name, event.target.value);
+    this.props.attributesChanged(event.target.value);
   }
 
   render() {

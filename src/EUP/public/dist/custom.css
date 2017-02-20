@@ -133,6 +133,9 @@ svg {
 .arrowhead {
   fill: #000;
 }
+g.node-yellow > rect {
+  fill: #FFCC66;
+}
 g.node-green > rect {
   fill: #C7E9C0;
 }
@@ -191,4 +194,15 @@ g.node:hover {
 a.link {
   text-decoration: none;
   cursor: pointer;
+}
+.tree-view-node { padding-left: 20px; }
+.tree-view-node-checkbox { margin-right: 5px; }
+.tree-view-node-collapse-toggle { cursor: pointer; margin-right: 5px; }
+.tree-view-node-label {
+  padding: 2px;
+  cursor: pointer;
+}
+.tree-view-node-label.selected {
+  background-color: #E9967A;
+  font-weight: bold;
 }

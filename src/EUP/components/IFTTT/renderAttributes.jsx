@@ -2,15 +2,13 @@ var React = require('react'),
 
     ConditionOrAction = require('./ConditionOrAction'),
     manageSelectedItem = require('./manageSelectedItem'),
-    NumericServiceAttributes = require('./NumericServiceAttributes.jsx'),
     SelectServiceAttributes = require('./SelectServiceAttributes.jsx');
 
 function renderAttributes(page, model) {
 
-  var handleAttributesChanged = (name, values) => {
+  var handleAttributesChanged = (value) => {
     var item = manageSelectedItem.get(page);
-    item.attributes = item.attributes || {};
-    item.attributes[name] = values;
+    item.value = value;
     manageSelectedItem.update(item, page);
   };
 
@@ -18,27 +16,13 @@ function renderAttributes(page, model) {
   var condition = new ConditionOrAction(item, model);
 
   var body = [];
-  var attributes = item.attributes || {};
 
-  condition.requiredAttributes.forEach((requiredAttribute) => {
-    var value = attributes[requiredAttribute.name];
-
-    switch (requiredAttribute.type) {
-    case 'numericCondition':
-      body.push(<NumericServiceAttributes
-        {...requiredAttribute}
-        value={value}
-        attributesChanged={handleAttributesChanged} />);
-      break;
-
-    case 'select':
-      body.push(<SelectServiceAttributes
-        {...requiredAttribute}
-        value={value}
-        attributesChanged={handleAttributesChanged} />);
-      break;
-    }
-  });
+  if (condition.options) {
+    body.push(<SelectServiceAttributes
+      options={condition.options}
+      value={condition.value}
+      attributesChanged={handleAttributesChanged} />);
+  }
 
   var backCallback = () => {
     manageSelectedItem.remove(page);

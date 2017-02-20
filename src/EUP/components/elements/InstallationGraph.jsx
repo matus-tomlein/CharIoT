@@ -3,8 +3,7 @@ var React = require('react'),
     buildGraphParams = require('./buildGraphParams'),
 
     InstalledApplication = require('./InstalledApplication.jsx'),
-    virtualSensorModals = require('./virtualSensorModals.jsx'),
-    VirtualSensorModal = virtualSensorModals.VirtualSensorModal,
+    VirtualSensorModal = require('./VirtualSensorModal.jsx'),
     DeviceModal = require('./DeviceModal.jsx'),
     LocationModal = require('./LocationModal.jsx'),
     RuleModal = require('./RuleModal.jsx'),
@@ -48,6 +47,7 @@ class InstallationGraph extends React.Component {
     else if (this.state.virtualSensor) {
       return <VirtualSensorModal
         sensor={this.state.virtualSensor}
+        model={this.props.model}
         closeCallback={closeCallback} />;
     }
 

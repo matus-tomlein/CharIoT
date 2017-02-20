@@ -1,17 +1,11 @@
+const ConditionOrActionInitializer = require('../../../Model/ConditionOrActionInitializer');
+
 module.exports = {
-  addNumericConditionAttribute: (condition) => {
-    condition.initializer().addNumericConditionAttribute();
-  },
-
-  addLocationScopeAttribute: (condition) => {
-    condition.initializer().addLocationScopeAttribute();
-  },
-
   addActionOptionsAttribute: (condition, action) => {
-    condition.initializer().addActionOptionsAttribute(action);
+    new ConditionOrActionInitializer(condition).addActionOptionsAttribute(action);
   },
 
   addVirtualSensorLabelAttribute: (condition, virtualSensor) => {
-    condition.initializer().addVirtualSensorLabelAttribute(virtualSensor);
+    new ConditionOrActionInitializer(condition).addVirtualSensorLabelAttribute(virtualSensor);
   }
 };

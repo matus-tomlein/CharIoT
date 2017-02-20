@@ -13,6 +13,7 @@ class LoginPage extends React.Component {
       clientId: '',
       clientSecret: '',
       hostname: 'bd-exp.andrew.cmu.edu',
+      mlHostname: 'localhost',
       protocol: 'https',
       mlProtocol: 'http',
       email: '',
@@ -23,6 +24,7 @@ class LoginPage extends React.Component {
     this._handleClientIdChange = this._handleClientIdChange.bind(this);
     this._handleClientSecretChange = this._handleClientSecretChange.bind(this);
     this._handleHostnameChange = this._handleHostnameChange.bind(this);
+    this._handleMlHostnameChange = this._handleMlHostnameChange.bind(this);
     this._handleBuildingChange = this._handleBuildingChange.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
   }
@@ -41,6 +43,10 @@ class LoginPage extends React.Component {
 
   _handleHostnameChange(event) {
     this.setState({ hostname: event.target.value });
+  }
+
+  _handleMlHostnameChange(event) {
+    this.setState({ mlHostname: event.target.value });
   }
 
   _handleBuildingChange(event) {
@@ -95,6 +101,14 @@ class LoginPage extends React.Component {
                 type="text"
                 onChange={this._handleHostnameChange}
                 value={this.state.hostname} />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">ML layer hostname:</label>
+              <input className="form-input"
+                type="text"
+                onChange={this._handleMlHostnameChange}
+                value={this.state.mlHostname} />
             </div>
 
             <div className="form-group">

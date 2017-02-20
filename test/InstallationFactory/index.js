@@ -2,7 +2,7 @@ const _ = require('underscore'),
 
       Model = require('../../src/Model'),
       DataModel = require('../../src/DataModel'),
-      chariotModel = require('chariot-model'),
+      chariotModel = require('../../src/chariotModel'),
       Device = chariotModel.Device,
       Action = chariotModel.Action,
       SensortagDeviceFactory = require('./SensortagDeviceFactory'),
@@ -12,6 +12,7 @@ const _ = require('underscore'),
 class InstallationFactory {
   constructor() {
     this.model = new Model();
+    this.model.building.name = 'Building ' + Math.round(Math.random()* 10000);
     this.sensorDataSamplings = [];
   }
 

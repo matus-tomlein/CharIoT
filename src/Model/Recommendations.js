@@ -1,5 +1,6 @@
-const Rule = require('./Rule'),
-      VirtualSensor = require('./VirtualSensor');
+const chariotModel = require('../chariotModel'),
+      Rule = chariotModel.Rule,
+      VirtualSensor = chariotModel.VirtualSensor;
 
 class Recommendations {
   constructor(data, model) {

@@ -28,10 +28,6 @@ class ServiceSearch extends React.Component {
       });
     }
 
-    // filteredServices = _.sortBy(filteredServices, (service) => {
-    //   return service.serviceNameWithSource;
-    // });
-
     var services = filteredServices.map((service) => {
       var onClick = () => {
         this.props.serviceChosenCallback(service.data);
@@ -39,20 +35,30 @@ class ServiceSearch extends React.Component {
       var name = service.serviceNameWithSource;
 
       var className = 'rounded padded ';
-      if (service.requiresReferencedVirtualSensor()) {
-        className += 'green';
-      } else if (service.requiresRecommendedVirtualSensor()) {
-        className += 'yellow';
+      if (service.requiresVirtualSensor()) {
+        let vs = service.virtualSensors[0];
+        if (vs.programmingType == 'Demonstrated') {
+          className += 'green';
+        } else {
+          className += 'yellow';
+        }
       } else if (service.hasLocation()) {
         className += 'lightred';
       } else if (service.requiresDevice()) {
         className += 'purple';
       }
 
+      let options = Object.keys(service.options).map((key) => {
+        return <i> <small className='label'>{service.options[key]}</small> </i>;
+      });
+
       return <div className='column col-sm-12 col-4 pt-10'>
         <div className={className}>
           <p className='lead'>
             {name}
+          </p>
+          <p>
+            {options}
           </p>
           <p>
             <button className='btn' onClick={onClick}>

@@ -6,7 +6,7 @@ var LocationModal = React.createClass({
   render: function () {
     var placedObjects = [];
     var location = this.props.location;
-    placedObjects = location.devices().map(function (object) {
+    placedObjects = location.devices.map(function (object) {
       return <tr>
         <td>{object.name}</td>
       </tr>;
