@@ -17,8 +17,8 @@ module.exports = (model, filters, graphParams) => {
       vs.sensors.forEach((sensor) => {
         graphParams.edges.push({
           from: vs.id,
-          to: sensor.id,
-          label: '',
+          to: sensor.device.id,
+          label: sensor.name,
           lineInterpolateBasis: false,
           color: '#C0C0C0',
           dashed: false,

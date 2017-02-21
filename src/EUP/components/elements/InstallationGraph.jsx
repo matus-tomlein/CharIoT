@@ -17,7 +17,7 @@ class InstallationGraph extends React.Component {
     this.state = {
       showLayouts: true,
       showRules: true,
-      showDevices: false,
+      showDevices: true,
       showSensors: true,
       showActions: true
     };
@@ -72,8 +72,6 @@ class InstallationGraph extends React.Component {
         <ul className="pagination">
           <Tag tag='Devices' active={this.state.showDevices} page={this} />
           <Tag tag='Sensors' active={this.state.showSensors} page={this} />
-          <Tag tag='Actions' active={this.state.showActions} page={this} />
-          <Tag tag='Layout' active={this.state.showLayouts} page={this} />
           <Tag tag='Rules' active={this.state.showRules} page={this} />
         </ul>
 

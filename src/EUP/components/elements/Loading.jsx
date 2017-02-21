@@ -1,7 +1,7 @@
-var React = require('react');
+const React = require('react');
 
-var Loading = React.createClass({
-  render: function () {
+class Loading extends React.Component {
+  render() {
     var text = this.props.text || 'Loading, please wait...';
 
     return <div>
@@ -12,6 +12,6 @@ var Loading = React.createClass({
         <h1 className='text-center'>{text}</h1>
       </div>;
   }
-});
+}
 
 module.exports = Loading;

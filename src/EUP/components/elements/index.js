@@ -1,6 +1,6 @@
 var cards = require('./cards.jsx');
 
-exports = {
+let exp = {
   Parameter: require('./Parameter.jsx'),
   MenuBar: require('./MenuBar.jsx'),
   Columns: require('./Columns.jsx'),
@@ -12,4 +12,4 @@ exports = {
   Tag: require('./Tag.jsx')
 };
 
-module.exports = Object.assign(exports, cards);
+module.exports = Object.assign(exp, cards);

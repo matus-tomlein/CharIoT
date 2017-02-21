@@ -86,7 +86,10 @@ main.initialize((err) => {
   a.post('/api/virtualSensors', function (req, res) {
     let model = main.model;
     let vs = new VirtualSensor(req.body, model.building);
-    main.giottoApi.createVirtualSensor(vs, (err) => {
+    let createFunction = vs.id ? main.giottoApi.updateVirtualSensor :
+      main.giottoApi.createVirtualSensor;
+
+    createFunction(vs, (err) => {
       if (err) {
         console.log(err);
         res.status(500).end();
@@ -105,6 +108,7 @@ main.initialize((err) => {
   a.post('/api/devices/:id', function (req, res) {
     let model = main.model;
     let device = new Device(req.body, model.building);
+    console.log(device.data);
 
     main.giottoApi.updateDevice(device, (err) => {
       if (err) {

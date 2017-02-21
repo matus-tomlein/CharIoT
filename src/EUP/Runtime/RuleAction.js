@@ -13,10 +13,6 @@ class RuleAction {
     var actionName = this.action.actionType;
 
     var devices = this.action.devicesWithAction();
-    if (this.action.attributes.locationScope == 'any' &&
-        devices.length) {
-      devices = [ devices[0] ];
-    }
 
     devices.forEach((device) => {
       let action = device.actionFor(actionName);
@@ -24,8 +20,8 @@ class RuleAction {
         console.log('Executing action', this.messageQueue, actionName, device.id);
 
         let parameter = 1;
-        if (this.action.attributes.parameter) {
-          parameter = this.action.attributes.parameter;
+        if (this.action.value) {
+          parameter = this.action.value;
         }
         this.api.postTimeseriesValue(action.uuid, getTime(), parameter);
       }

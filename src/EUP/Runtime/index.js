@@ -69,12 +69,12 @@ class Runtime {
       var sensors = subscribedSensors[key];
 
       var updater = new SensorUpdater(sensors, this.api);
-      updater.start((value) => {
+      updater.start((value, uuid) => {
         if (!this.running) return;
 
         console.log(key, value);
         this.ruleExecutions.forEach(function (ruleExecution) {
-          ruleExecution.sensorsValueUpdated(sensors, value);
+          ruleExecution.sensorsValueUpdated(sensors, value, uuid);
         });
       });
 

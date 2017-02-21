@@ -1,18 +1,18 @@
-let React = require('react'),
-    $ = require('jquery'),
+const React = require('react'),
+      $ = require('jquery'),
 
-    elements = require('../elements'),
-    Loading = elements.Loading;
+      Loading = require('../elements/Loading.jsx');
 
 
-class VSTrain extends React.Component {
+class DemonstratedVSTrain extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {data: props.sensor};
 
     this._handleStartTraining = this._handleStartTraining.bind(this);
     this._handleStopTraining = this._handleStopTraining.bind(this);
     this._handleCancelTraining = this._handleCancelTraining.bind(this);
+
+    this.state = {};
   }
 
   getTime(callback) {
@@ -57,7 +57,6 @@ class VSTrain extends React.Component {
   }
 
   render() {
-    let that = this;
     let body;
     let sensor = this.props.sensor;
 
@@ -65,6 +64,7 @@ class VSTrain extends React.Component {
       let text = 'Demonstrate the "' + this.state.trainingLabel + '" behaviour...';
       body = <div className='text-center'>
         <Loading text={text} />
+
         <div className='btn-group'>
           <button className='btn btn-primary btn-lg' onClick={this._handleStopTraining}>
             Stop and save demonstration
@@ -101,7 +101,7 @@ class VSTrain extends React.Component {
 
       let demonstrateButtons = sensor.labels.map((label) => {
         let onClick = () => {
-          that._handleStartTraining(label);
+          this._handleStartTraining(label);
         };
         return <button className='btn' onClick={onClick}> Demonstrate {label} </button>;
       });
@@ -135,7 +135,7 @@ class VSTrain extends React.Component {
       <div>
         <h5>
           <i className='fa fa-thermometer-full' aria-hidden='true'></i>&nbsp;
-          Train virtual sensor: {this.props.sensor.name}
+          Train virtual sensor: {sensor.name}
         </h5>
         {body}
       </div>
@@ -143,4 +143,4 @@ class VSTrain extends React.Component {
   }
 }
 
-module.exports = VSTrain;
+module.exports = DemonstratedVSTrain;

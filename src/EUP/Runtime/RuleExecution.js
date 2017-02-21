@@ -1,5 +1,4 @@
-var NumericRuleCondition = require('./NumericRuleCondition'),
-    _ = require('underscore'),
+var _ = require('underscore'),
     VirtualSensorRuleCondition = require('./VirtualSensorRuleCondition'),
     RuleAction = require('./RuleAction');
 
@@ -10,9 +9,7 @@ class RuleExecution {
 
     this.conditions = [];
     rule.conditions.forEach((condition) => {
-      if (condition.requiresSensor()) {
-        this.conditions.push(new NumericRuleCondition(condition));
-      } else if (condition.requiresVirtualSensor()) {
+      if (condition.requiresVirtualSensor()) {
         this.conditions.push(new VirtualSensorRuleCondition(condition));
       } else {
         console.error('Unsupported rule condition');
@@ -51,7 +48,7 @@ class RuleExecution {
     return satisfied;
   }
 
-  sensorsValueUpdated(sensors, value) {
+  sensorsValueUpdated(sensors, value, uuid) {
     var sensorsToKey = (sensors) => { return _.sortBy(sensors).join(','); };
     var key = sensorsToKey(sensors);
     var shouldTrigger = false;
@@ -60,7 +57,7 @@ class RuleExecution {
       return condition.subscribedSensors &&
         sensorsToKey(condition.subscribedSensors()) == key;
     }).forEach(function (condition) {
-      if (condition.shouldNewSensorValueTrigger(value))
+      if (condition.shouldNewSensorValueTrigger(value, uuid))
         shouldTrigger = true;
     });
 

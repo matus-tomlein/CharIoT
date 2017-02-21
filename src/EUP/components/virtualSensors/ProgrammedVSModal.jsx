@@ -201,7 +201,7 @@ class ProgrammedVSForm extends React.Component {
   }
 }
 
-class ConfiguredVSModal extends React.Component {
+class ProgrammedVSModal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -258,4 +258,4 @@ class ConfiguredVSModal extends React.Component {
   }
 }
 
-module.exports = ConfiguredVSModal;
+module.exports = ProgrammedVSModal;

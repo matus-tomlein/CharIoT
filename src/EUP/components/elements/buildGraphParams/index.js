@@ -2,7 +2,7 @@ const buildLocations = require('./buildLocations'),
       buildDevices = require('./buildDevices'),
       buildVirtualSensors = require('./buildVirtualSensors'),
       buildRules = require('./buildRules'),
-      buildSensorsAndActions = require('./buildSensorsAndActions'),
+      // buildSensorsAndActions = require('./buildSensorsAndActions'),
       removeEdgesAndPlacementsWithoutNodes = require('./removeEdgesAndPlacementsWithoutNodes');
 
 function buildGraphParams(model, filters = {}) {
@@ -17,7 +17,6 @@ function buildGraphParams(model, filters = {}) {
   buildVirtualSensors(model, filters, graphParams);
   buildLocations(model, filters, graphParams);
   buildRules(model, filters, graphParams);
-  buildSensorsAndActions(model, filters, graphParams);
   removeEdgesAndPlacementsWithoutNodes(graphParams);
 
   return graphParams;

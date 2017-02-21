@@ -6,20 +6,29 @@ class VirtualSensorRuleCondition {
     this.previouslySatisfied = false;
   }
 
-  subscribedVirtualSensor() {
-    return this.condition.virtualSensor;
+  subscribedSensors() {
+    return this.condition.virtualSensors.map((s) => {
+      return s.id;
+    });
   }
 
-  shouldNewSensorValueTrigger(newValue) {
-    this.lastValue = newValue;
+  shouldNewSensorValueTrigger(newValue, uuid) {
+    newValue = parseInt(newValue);
 
-    var shouldTrigger = !this.previouslySatisfied && this.isSatisfied();
-    this.previouslySatisfied = this.isSatisfied();
-    return shouldTrigger;
+    let vs = this.condition.virtualSensors.find((vs) => { return vs.id == uuid; });
+    if (vs) {
+      newValue = vs.labels[newValue];
+      console.log(newValue);
+      this.lastValue = newValue;
+
+      var shouldTrigger = !this.previouslySatisfied && this.isSatisfied();
+      this.previouslySatisfied = this.isSatisfied();
+      return shouldTrigger;
+    }
   }
 
   isSatisfied() {
-    return this.condition.attributes.label == this.lastValue;
+    return this.condition.value == this.lastValue;
   }
 }
 

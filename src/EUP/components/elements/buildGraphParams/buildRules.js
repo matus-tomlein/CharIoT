@@ -54,8 +54,8 @@ module.exports = (model, filters, graphParams) => {
         if (action) {
           graphParams.edges.push({
             from: rule.id,
-            to: action.id,
-            label: ruleAction.describeAttributes(),
+            to: action.device.id,
+            label: action.name + ' ' + ruleAction.describeAttributes(),
             lineInterpolateBasis: false,
             color: '#87A980',
             dashed: false,
