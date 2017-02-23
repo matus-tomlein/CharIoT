@@ -7,6 +7,7 @@ class VirtualSensorUpdater {
 
     let config = { host: 'case.tomlein.org', port: 7777 };
     this.nrp = new NRP(config);
+    this.nrp.on('error', (err) => { console.log(err); });
   }
 
   subscribeToSensor(virtualSensor) {

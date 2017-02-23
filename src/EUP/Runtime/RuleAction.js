@@ -1,3 +1,5 @@
+const NRP = require('node-redis-pubsub');
+
 function getTime() {
   return new Date().getTime() / 1000;
 }
@@ -7,6 +9,10 @@ class RuleAction {
     this.action = action;
     this.api = api;
     this.messageQueue = 'iot-commissioner-actions';
+
+    let config = { host: 'case.tomlein.org', port: 7777 };
+    this.nrp = new NRP(config);
+    this.nrp.on('error', (err) => { console.log(err); });
   }
 
   trigger() {
@@ -23,6 +29,8 @@ class RuleAction {
         if (this.action.value) {
           parameter = this.action.value;
         }
+
+        this.nrp.emit(action.uuid, { value: parameter });
         this.api.postTimeseriesValue(action.uuid, getTime(), parameter);
       }
     });
