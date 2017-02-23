@@ -144,10 +144,14 @@ class ProgrammedVSForm extends React.Component {
         conditionChanged={this._onConditionChanged}
         condition={c} i={i} />;
     });
-    let chosenSensor = '';
+    let chosenSensor;
     if (sensor.sensors.length) {
       let s = sensor.sensors[0];
-      chosenSensor = '(' + s.device.name + ' – ' + s.name + ')';
+      chosenSensor = <span> <div className='chip-sm'>
+          <span className='chip-name'>
+            <i className="fa fa-thermometer-half" aria-hidden="true"></i> {s.device.name} – {s.name}
+          </span>
+        </div> </span>;
     }
 
     return <div>

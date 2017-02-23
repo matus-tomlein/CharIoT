@@ -67336,6 +67336,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var React = require('react'),
+    _ = require('underscore'),
     SensorTreeMenu = require('./SensorTreeMenu.jsx');
 
 var VSForm = function (_React$Component) {
@@ -67424,7 +67425,10 @@ var VSForm = function (_React$Component) {
         );
       });
 
-      var selectedInputs = sensor.sensors.map(function (s) {
+      var deviceNames = _.uniq(sensor.sensors.map(function (s) {
+        return s.device.name;
+      }));
+      var selectedInputs = deviceNames.map(function (deviceName) {
         return React.createElement(
           'span',
           null,
@@ -67437,9 +67441,7 @@ var VSForm = function (_React$Component) {
               { className: 'chip-name' },
               React.createElement('i', { className: 'fa fa-thermometer-half', 'aria-hidden': 'true' }),
               ' ',
-              s.device.name,
-              ' \u2013 ',
-              s.name
+              deviceName
             )
           ),
           ' '
@@ -67531,7 +67533,7 @@ var VSForm = function (_React$Component) {
 module.exports = VSForm;
 
 
-},{"./SensorTreeMenu.jsx":544,"react":458}],541:[function(require,module,exports){
+},{"./SensorTreeMenu.jsx":544,"react":458,"underscore":482}],541:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -68129,10 +68131,28 @@ var ProgrammedVSForm = function (_React$Component2) {
           conditionChanged: _this3._onConditionChanged,
           condition: c, i: i });
       });
-      var chosenSensor = '';
+      var chosenSensor = void 0;
       if (sensor.sensors.length) {
         var s = sensor.sensors[0];
-        chosenSensor = '(' + s.device.name + ' – ' + s.name + ')';
+        chosenSensor = React.createElement(
+          'span',
+          null,
+          ' ',
+          React.createElement(
+            'div',
+            { className: 'chip-sm' },
+            React.createElement(
+              'span',
+              { className: 'chip-name' },
+              React.createElement('i', { className: 'fa fa-thermometer-half', 'aria-hidden': 'true' }),
+              ' ',
+              s.device.name,
+              ' \u2013 ',
+              s.name
+            )
+          ),
+          ' '
+        );
       }
 
       return React.createElement(
@@ -68372,8 +68392,13 @@ var SensorTreeMenu = function (_React$Component) {
     var model = props.model;
     var data = model.locations.map(function (location) {
       var devices = location.devices.map(function (device) {
+        var deviceChecked = true;
         var sensors = device.sensors.map(function (sensor) {
           var checked = _this.props.checkedIds && _this.props.checkedIds.includes(sensor.id);
+          if (!checked) {
+            deviceChecked = false;
+          }
+
           return {
             id: sensor.id,
             label: React.createElement(
@@ -68398,6 +68423,8 @@ var SensorTreeMenu = function (_React$Component) {
             device.name
           ),
           children: sensors,
+          checkbox: _this.props.checkable,
+          checked: deviceChecked,
           collapsed: true
         };
       });
@@ -68442,6 +68469,8 @@ var SensorTreeMenu = function (_React$Component) {
   }, {
     key: '_checkChanged',
     value: function _checkChanged(node) {
+      var _this2 = this;
+
       if (this.props.checkable) {
         var data = this.state.data;
         if (node.length == 3) {
@@ -68449,6 +68478,16 @@ var SensorTreeMenu = function (_React$Component) {
 
           item.checked = !item.checked;
           this.props.sensorChanged(item.id, item.checked);
+        } else if (node.length == 2) {
+          (function () {
+            var item = data[node[0]].children[node[1]];
+
+            item.checked = !item.checked;
+            item.children.forEach(function (child) {
+              child.checked = item.checked;
+              _this2.props.sensorChanged(child.id, child.checked);
+            });
+          })();
         }
 
         this.setState({ data: data });
@@ -68457,7 +68496,7 @@ var SensorTreeMenu = function (_React$Component) {
   }, {
     key: '_clicked',
     value: function _clicked(node) {
-      var _this2 = this;
+      var _this3 = this;
 
       var data = this.state.data;
       if (node.length == 1) {
@@ -68480,7 +68519,7 @@ var SensorTreeMenu = function (_React$Component) {
             });
           });
 
-          _this2.props.sensorChanged(item.id, item.selected);
+          _this3.props.sensorChanged(item.id, item.selected);
         })();
       }
 

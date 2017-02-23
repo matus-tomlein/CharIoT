@@ -9,9 +9,12 @@ class SensorTreeMenu extends React.Component {
     let model = props.model;
     let data = model.locations.map((location) => {
       let devices = location.devices.map((device) => {
+        let deviceChecked = true;
         let sensors = device.sensors.map((sensor) => {
           let checked = this.props.checkedIds &&
             this.props.checkedIds.includes(sensor.id);
+          if (!checked) { deviceChecked = false; }
+
           return {
             id: sensor.id,
             label: <span><i className="fa fa-thermometer-half" aria-hidden="true"></i> {sensor.name}</span>,
@@ -24,6 +27,8 @@ class SensorTreeMenu extends React.Component {
         return {
           label: <span><i className="fa fa-lightbulb-o" aria-hidden="true"></i> {device.name}</span>,
           children: sensors,
+          checkbox: this.props.checkable,
+          checked: deviceChecked,
           collapsed: true
         };
       });
@@ -65,6 +70,14 @@ class SensorTreeMenu extends React.Component {
 
         item.checked = !item.checked;
         this.props.sensorChanged(item.id, item.checked);
+      } else if (node.length == 2) {
+        let item = data[node[0]].children[node[1]];
+
+        item.checked = !item.checked;
+        item.children.forEach((child) => {
+          child.checked = item.checked;
+          this.props.sensorChanged(child.id, child.checked);
+        });
       }
 
       this.setState({data: data});

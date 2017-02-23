@@ -1,4 +1,5 @@
 const React = require('react'),
+      _ = require('underscore'),
 
       SensorTreeMenu = require('./SensorTreeMenu.jsx');
 
@@ -61,10 +62,11 @@ class VSForm extends React.Component {
       </div> </span>;
     });
 
-    let selectedInputs = sensor.sensors.map((s) => {
+    let deviceNames = _.uniq(sensor.sensors.map((s) => { return s.device.name; }));
+    let selectedInputs = deviceNames.map((deviceName) => {
       return <span> <div className='chip-sm'>
         <span className='chip-name'>
-          <i className="fa fa-thermometer-half" aria-hidden="true"></i> {s.device.name} – {s.name}
+          <i className="fa fa-thermometer-half" aria-hidden="true"></i> {deviceName}
         </span>
       </div> </span>;
     });
