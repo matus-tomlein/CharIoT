@@ -3,10 +3,15 @@ module.exports = (model, filters, graphParams) => {
     model.virtualSensors.forEach((vs) => {
       let className = vs.programmingType == 'Demonstrated' ?
         'node-green' : 'node-yellow';
+      let label = vs.name;
+      if (vs.value) {
+        label += ' (' + vs.value + ')';
+      }
+
       graphParams.nodes.push({
         id: vs.id,
         icon: 'fa-thermometer-full',
-        label: vs.name,
+        label: label,
         css_class: className,
         arrowheadClass: 'greyArrowhead',
         color: '#C0C0C0',

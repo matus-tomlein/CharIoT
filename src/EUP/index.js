@@ -2,6 +2,7 @@ var express = require('express'),
     _ = require('underscore'),
     jsx = require('node-jsx'),
     bodyParser = require('body-parser'),
+    async = require('async'),
 
     model = require('../chariotModel'),
     Device = model.Device,
@@ -168,23 +169,28 @@ main.initialize((err) => {
     let model = main.model;
     let rule = new Rule(req.body, model.building);
     main.giottoApi.createRule(rule, (err) => {
-      if (err) {
-        console.log(err);
-        res.status(500).end();
-        return;
+      if (err) { console.log(err); res.status(500).end(); return; }
+
+      let recommendedVirtualSensors = [];
+      rule.conditions.forEach((condition) => {
+        condition.virtualSensors.forEach((vs) => {
+          if (vs.isRecommended) {
+            recommendedVirtualSensors.push(vs);
+          }
+        });
+      });
+
+      if (recommendedVirtualSensors.length) {
+        async.each(recommendedVirtualSensors, (vs, done) => {
+          main.giottoApi.createVirtualSensor(vs, done);
+        }, (err) => {
+          if (err) { console.log(err); res.status(500).end(); return; }
+          res.end('OK');
+        });
+      } else {
+        res.end('OK');
       }
-
-      res.end('OK');
     });
-
-    // rule.conditions.forEach((condition) => {
-    //   if (condition.requiresRecommendedVirtualSensor()) {
-    //     let recommendedSensor = condition.recommendedVirtualSensor;
-    //
-    //     model.addVirtualSensor(recommendedSensor);
-    //     condition.virtualSensor = recommendedSensor;
-    //   }
-    // });
   });
 
   a.delete('/api/rules/:id', function (req, res) {

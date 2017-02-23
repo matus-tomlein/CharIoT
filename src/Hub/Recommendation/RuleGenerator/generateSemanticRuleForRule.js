@@ -22,36 +22,34 @@ function createConditionOrActionBlank(condition, semanticRule) {
         object: literal(condition.id)
       },
       {
-        predicate: uri('attributesJson'),
-        object: literal(JSON.stringify(condition.attributes))
+        predicate: uri('value'),
+        object: literal(condition.value)
       },
       {
-        predicate: uri('requiredAttributesJson'),
-        object: literal(JSON.stringify(condition.requiredAttributes))
+        predicate: uri('options'),
+        object: literal(JSON.stringify(condition.options))
       }
   ];
 
-  if (condition.requiresSensor()) {
-    conditionBlank.push({
-      predicate: uri('sensorType'),
-      object: literal(condition.sensorType)
-    });
-  }
-
   if (condition.requiresVirtualSensor()) {
-    let virtualSensor = condition.virtualSensor;
-    let virtualSensorNode = '?vs_' + hashString(virtualSensor.id);
+    let virtualSensor = condition.virtualSensors[0];
+    let virtualSensorNode = '?vs_' + hashString(virtualSensor.name);
 
     semanticRule.precondition.push([
       virtualSensorNode, rdf('type'), uri('VirtualSensor')
     ]);
     semanticRule.precondition.push([
-      virtualSensorNode, uri('id'), literal(virtualSensor.id)
+      virtualSensorNode, uri('name'), literal(virtualSensor.name)
+    ]);
+
+    let locationNode = '?loc_' + hashString(virtualSensor.locationName);
+    semanticRule.precondition.push([
+      virtualSensorNode, uri('location'), locationNode
     ]);
 
     conditionBlank.push({
-      predicate: uri('virtualSensor'),
-      object: virtualSensorNode
+      predicate: uri('virtualSensorName'),
+      object: literal(condition.virtualSensorName)
     });
   }
 
@@ -69,9 +67,9 @@ function createConditionOrActionBlank(condition, semanticRule) {
       locationNode, rdf('type'), uri('Location')
     ]);
 
-    if (condition.requiresSensor()) {
+    if (condition.requiresAction()) {
       semanticRule.precondition.push([
-        locationNode, uri('sensorType'), literal(condition.sensorType)
+        locationNode, uri('actionType'), literal(condition.actionType)
       ]);
     }
 
@@ -88,9 +86,9 @@ function createConditionOrActionBlank(condition, semanticRule) {
       deviceNode, rdf('type'), uri('Device')
     ]);
 
-    if (condition.requiresSensor()) {
+    if (condition.requiresAction()) {
       semanticRule.precondition.push([
-        deviceNode, uri('sensorType'), literal(condition.sensorType)
+        deviceNode, uri('actionType'), literal(condition.actionType)
       ]);
     }
 

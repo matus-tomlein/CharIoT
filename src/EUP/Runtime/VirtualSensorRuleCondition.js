@@ -7,9 +7,7 @@ class VirtualSensorRuleCondition {
   }
 
   subscribedSensors() {
-    return this.condition.virtualSensors.map((s) => {
-      return s.id;
-    });
+    return this.condition.virtualSensors;
   }
 
   shouldNewSensorValueTrigger(newValue, uuid) {

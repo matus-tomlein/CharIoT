@@ -9,6 +9,7 @@ let exp = {
   Loading: require('./Loading.jsx'),
   DagreD3Graph: require('./DagreD3Graph.jsx'),
   InstallationGraph: require('./InstallationGraph.jsx'),
+  AddVirtualSensor: require('./AddVirtualSensor.jsx'),
   Tag: require('./Tag.jsx')
 };
 

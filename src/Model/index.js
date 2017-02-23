@@ -1,7 +1,4 @@
-const Recommendations = require('./Recommendations'),
-      SensorData = require('./SensorData'),
-
-      model = require('../chariotModel'),
+const model = require('../chariotModel'),
       Building = model.Building,
       Location = model.Location,
 
@@ -9,7 +6,7 @@ const Recommendations = require('./Recommendations'),
 
 let blankData = {
   configuration: {
-    sources: [], reasoners: []
+    friendlyBuildings: []
   },
   giotto: {
     devices: []
@@ -18,7 +15,7 @@ let blankData = {
     rules: [],
     properties: []
   },
-  recommended: {
+  recommendations: {
     rules: []
   }
 };
@@ -33,6 +30,7 @@ class Model {
 
   set building(building) { this.data.giotto = building.data; }
   set credentials(credentials) { this.data.credentials = credentials; }
+  set recommendations(recommendations) { this.building.recommendations = recommendations; }
 
   get id() { return this.building.id; }
   get building() { return new Building(this.data.giotto); }
@@ -42,40 +40,25 @@ class Model {
   get actions() { return this.building.actions; }
   get credentials() { return this.data.credentials; }
   get virtualSensors() { return this.building.virtualSensors; }
+  get rules() { return this.building.rules; }
 
   get recommendedVirtualSensors() {
-    return this.recommendations.virtualSensors;
-  }
-
-  get rules() {
-    return this.building.rules;
+    return this.building.recommendedVirtualSensors;
   }
 
   get allRecommenedRules() {
-    return this.recommendations.rulesBySensorSimilarity;
+    return this.building.allRecommenedRules;
   }
 
-  get recommendations() {
-    return new Recommendations(this.data.recommended, this);
-  }
+  get recommendations() { return this.building.recommendations; }
 
   locationFor(locationName) {
     return new Location({ name: locationName }, this.building);
   }
 
-  sensorDataFor(sensor) {
-    return new SensorData(sensor, this);
-  }
-
   addDevice(device) { this.building.addDevice(device); }
-
-  addRule(rule) {
-    this.building.addRule(rule);
-  }
-
-  addVirtualSensor(virtualSensor) {
-    this.building.addVirtualSensor(virtualSensor);
-  }
+  addRule(rule) { this.building.addRule(rule); }
+  addVirtualSensor(virtualSensor) { this.building.addVirtualSensor(virtualSensor); }
 }
 
 Model.blankData = blankData;

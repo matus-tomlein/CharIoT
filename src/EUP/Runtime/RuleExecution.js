@@ -1,5 +1,4 @@
-var _ = require('underscore'),
-    VirtualSensorRuleCondition = require('./VirtualSensorRuleCondition'),
+var VirtualSensorRuleCondition = require('./VirtualSensorRuleCondition'),
     RuleAction = require('./RuleAction');
 
 class RuleExecution {
@@ -24,18 +23,6 @@ class RuleExecution {
         console.error('Unsupported rule action');
       }
     });
-
-    this.subscribeToSensors = this.conditions.filter(function (condition) {
-      return condition.subscribedSensors;
-    }).map(function (condition) {
-      return condition.subscribedSensors();
-    });
-
-    this.subscribeToVirtualSensors = this.conditions.filter(function (condition) {
-      return condition.subscribedVirtualSensor;
-    }).map(function (condition) {
-      return condition.subscribedVirtualSensor();
-    }).filter((vs) => { return vs; });
   }
 
   isSatisfied() {
@@ -48,29 +35,14 @@ class RuleExecution {
     return satisfied;
   }
 
-  sensorsValueUpdated(sensors, value, uuid) {
-    var sensorsToKey = (sensors) => { return _.sortBy(sensors).join(','); };
-    var key = sensorsToKey(sensors);
-    var shouldTrigger = false;
-
-    this.conditions.filter(function (condition) {
-      return condition.subscribedSensors &&
-        sensorsToKey(condition.subscribedSensors()) == key;
-    }).forEach(function (condition) {
-      if (condition.shouldNewSensorValueTrigger(value, uuid))
-        shouldTrigger = true;
-    });
-
-    if (shouldTrigger && this.isSatisfied()) {
-      this.executeActions();
-    }
-  }
-
-  virtualSensorValueUpdated(sensor, value) {
+  sensorValueUpdated(virtualSensorId, value) {
     var shouldTrigger = false;
     this.conditions.filter(function (condition) {
-      return condition.subscribedVirtualSensor &&
-        condition.subscribedVirtualSensor().id == sensor.id;
+      if (condition.subscribedSensors) {
+        return condition.subscribedSensors.find((vs) => {
+          return vs.id == virtualSensorId;
+        });
+      }
     }).forEach(function (condition) {
       if (condition.shouldNewSensorValueTrigger(value))
         shouldTrigger = true;

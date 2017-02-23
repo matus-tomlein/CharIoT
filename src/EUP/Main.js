@@ -1,7 +1,8 @@
 const GIoTTOApi = require('../../../giotto-api'),
-      HubReporter = require('./HubReporter'),
+      RecommendationsUpdater = require('./RecommendationsUpdater'),
       Model = require('./Model'),
       Runtime = require('./Runtime'),
+      VirtualSensorUpdater = require('./Runtime/VirtualSensorUpdater'),
 
       Settings = require('../Helpers').Settings;
 
@@ -56,6 +57,7 @@ class Main {
       this.giottoApi = api;
 
       this.runtime = new Runtime(this.giottoApi);
+      this.virtualSensorUpdater = new VirtualSensorUpdater(this.runtime);
       if (err) { callback(err); return; }
 
       this.refresh((err) => {
@@ -69,6 +71,7 @@ class Main {
   refresh(callback) {
     if (!this.isLoggedIn) { callback('Not logged in'); return; }
     if (this.runtime) this.runtime.reset();
+    if (this.virtualSensorUpdater) { this.virtualSensorUpdater.unsubscribeAll(); }
 
     this.giottoApi.getBuildingModel(this.credentials.building, (err, building) => {
       if (err) { callback(err); return; }
@@ -77,12 +80,16 @@ class Main {
 
       if (this.runtime) this.runtime.start(this.model);
 
-      var hubReporter = new HubReporter(this.giottoApi, this.settings);
-      hubReporter.report((err) => {
+      var updater = new RecommendationsUpdater(this.giottoApi, this.settings);
+      updater.update((err) => {
         if (err) { callback(err); return; }
 
         this.settings.save((err) => {
           if (err) { callback(err); return; }
+
+          this.model.virtualSensors.forEach((vs) => {
+            this.virtualSensorUpdater.subscribeToSensor(vs);
+          });
 
           callback();
         });

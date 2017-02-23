@@ -14,7 +14,7 @@ class SensorTreeMenu extends React.Component {
             this.props.checkedIds.includes(sensor.id);
           return {
             id: sensor.id,
-            label: sensor.name,
+            label: <span><i className="fa fa-thermometer-half" aria-hidden="true"></i> {sensor.name}</span>,
             checkbox: this.props.checkable,
             checked: checked,
             selected: false
@@ -22,14 +22,14 @@ class SensorTreeMenu extends React.Component {
         });
 
         return {
-          label: device.name,
+          label: <span><i className="fa fa-lightbulb-o" aria-hidden="true"></i> {device.name}</span>,
           children: sensors,
           collapsed: true
         };
       });
 
       return {
-        label: location.name,
+        label: <span><i className="fa fa-map-marker" aria-hidden="true"></i> {location.name}</span>,
         children: devices,
         collapsed: true
       };

@@ -31,7 +31,7 @@ var UriInput = React.createClass({
 
 var EditConfigurationPage = React.createClass({
   getInitialState: function () {
-    return { data: { hubs: [] } };
+    return { data: { friendlyBuildings: [] } };
   },
 
   loadConfiguration: function () {
@@ -44,24 +44,24 @@ var EditConfigurationPage = React.createClass({
     this.loadConfiguration();
   },
 
-  _handleAddHub: function () {
+  _handleAddBuilding: function () {
     var state = this.state;
-    if (!state.data.hubs) {
-      state.data.hubs = [];
+    if (!state.data.friendlyBuildings) {
+      state.data.friendlyBuildings = [];
     }
-    state.data.hubs.push({ uri: 'http://' });
+    state.data.friendlyBuildings.push('');
     this.setState(state);
   },
 
   removeRow: function (i) {
     var state = this.state;
-    state.data.hubs.splice(i, 1);
+    state.data.friendlyBuildings.splice(i, 1);
     this.setState(state);
   },
 
-  uriChanged: function (uri, i) {
+  uriChanged: function (name, i) {
     var state = this.state;
-    state.data.hubs[i].uri = uri;
+    state.data.friendlyBuildings[i] = name;
     this.setState(state);
   },
 
@@ -71,8 +71,8 @@ var EditConfigurationPage = React.createClass({
 
   render: function() {
     var that = this;
-    var hubElements = (this.state.data.hubs || []).map(function (hub, i) {
-      return <UriInput uri={hub.uri}
+    var hubElements = (this.state.data.friendlyBuildings || []).map(function (hub, i) {
+      return <UriInput uri={hub}
         i={i}
         parent={that} />;
     });
@@ -82,7 +82,7 @@ var EditConfigurationPage = React.createClass({
         <table className="table table-striped table-hover">
           <thead>
             <tr>
-              <th>Hub URIs</th>
+              <th>Friendly buildings</th>
               <th>&nbsp;</th>
             </tr>
           </thead>
@@ -92,8 +92,8 @@ var EditConfigurationPage = React.createClass({
           <tfoot>
             <tr>
               <th>
-                <button className='btn btn-link' onClick={this._handleAddHub}>
-                  Add a Hub
+                <button className='btn btn-link' onClick={this._handleAddBuilding}>
+                  Add a friendly building
                 </button>
               </th>
               <th>&nbsp;</th>

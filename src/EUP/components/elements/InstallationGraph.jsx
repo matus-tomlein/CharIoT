@@ -2,6 +2,7 @@ var React = require('react'),
 
     buildGraphParams = require('./buildGraphParams'),
 
+    AddVirtualSensor = require('./AddVirtualSensor.jsx'),
     InstalledApplication = require('./InstalledApplication.jsx'),
     VirtualSensorModal = require('./VirtualSensorModal.jsx'),
     DeviceModal = require('./DeviceModal.jsx'),
@@ -68,12 +69,8 @@ class InstallationGraph extends React.Component {
       });
 
       return <div>
-        <span className="text-bold">{this.props.model.building.name}:</span>
-        <ul className="pagination">
-          <Tag tag='Devices' active={this.state.showDevices} page={this} />
-          <Tag tag='Sensors' active={this.state.showSensors} page={this} />
-          <Tag tag='Rules' active={this.state.showRules} page={this} />
-        </ul>
+        <span className="text-bold">{this.props.model.building.name}</span>
+        <AddVirtualSensor model={this.props.model} />
 
         <DagreD3Graph {...graphParams}
           nodeClicked={nodeClicked} />

@@ -31,6 +31,7 @@
     "js-combinatorics": "^0.5.2",
     "n3": "^0.8.5",
     "node-jsx": "^0.13.3",
+    "node-redis-pubsub": "^1.0.2",
     "object-hash": "^1.1.5",
     "randgen": "^0.1.0",
     "react": "^15.3.2",

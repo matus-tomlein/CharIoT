@@ -1,74 +1,26 @@
+const NRP = require('node-redis-pubsub');
+
 class VirtualSensorUpdater {
-  constructor(virtualSensorInfo, api) {
-    this.virtualSensorInfo = virtualSensorInfo;
-    this.api = api;
-    this.running = false;
+  constructor(runtime) {
+    this.runtime = runtime;
+    this.unsubscribes = [];
+
+    let config = { port: 6379 };
+    this.nrp = new NRP(config);
   }
 
-  start(callback) {
-    this.running = true;
-    this._update(5000, callback);
-  }
-
-  stop() {
-    this.running = false;
-    this.virtualSensor = null;
-  }
-
-  _update(interval, callback) {
-    if (!this.running) return;
-    if (!this.virtualSensorInfo.samples ||
-        this.virtualSensorInfo.samples.length == 0) return;
-
-    var continueAfterTraining = (err) => {
-      if (!this.running) return;
-      if (err) { console.error(err); return; }
-
-      this._predict((err, label) => {
-        if (!this.running) return;
-
-        setTimeout(() => {
-          this._update(interval, callback);
-        }, interval);
-
-        if (err) { console.error(err); return; }
-
-        callback(label);
-      });
-    };
-
-    if (!this.virtualSensor) {
-      this.virtualSensor = this.api.virtualSensor();
-      this._train(continueAfterTraining);
-    } else {
-      continueAfterTraining();
-    }
-  }
-
-  _train(callback) {
-    this.virtualSensorInfo.samples.forEach((sample) => {
-      var uuids = this.virtualSensorInfo.sampleUuids(sample);
-
-      this.virtualSensor.addSample(uuids,
-          sample.start,
-          sample.end,
-          sample.label,
-          sample.features);
+  subscribeToSensor(virtualSensor) {
+    let unsubscribe = this.nrp.on(virtualSensor.id, (data) => {
+      console.log('Received value', virtualSensor.name, data.value);
+      virtualSensor.value = data.value;
+      this.runtime.virtualSensorUpdated(virtualSensor.id, data.value);
     });
-
-    this.virtualSensor.train(callback);
+    this.unsubscribes.push(unsubscribe);
   }
 
-  _predict(callback) {
-    var predictEnd = (new Date().getTime() / 1000) - 5; // 5 seconds ago
-    var predictStart = predictEnd - this.virtualSensorInfo.averageSampleLength();
-
-    var sensorIdsByType = this.virtualSensorInfo.sensorIdsByType();
-    var uuids = this.virtualSensorInfo.sensors.map((sensorType) => {
-      return sensorIdsByType[sensorType];
-    });
-
-    this.virtualSensor.predict(uuids, predictStart, predictEnd, callback);
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => { unsubscribe(); });
+    this.unsubscribes = [];
   }
 }
 

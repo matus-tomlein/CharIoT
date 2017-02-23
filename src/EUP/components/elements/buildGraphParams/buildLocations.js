@@ -3,7 +3,7 @@ module.exports = (model, filters, graphParams) => {
     model.locations.forEach((l) => {
       graphParams.nodes.push({
         id: l.id + '_node',
-        icon: 'fa-building-o',
+        icon: 'fa-map-marker',
         label: l.name,
         css_class: 'node-textonly'
       });

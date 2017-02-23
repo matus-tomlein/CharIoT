@@ -29,7 +29,9 @@ class OntologyBuilder {
       deviceEntity.references.sensor = device.sensors.map((sensor) => {
         var sensorEntity = new Entity('Sensor', vocab, this.store);
         sensorEntity.id = sensor.id;
+        sensorEntity.literals.uuid = sensor.uuid;
         sensorEntity.literals.name = sensor.name;
+        sensorEntity.references.device = [deviceEntity];
         sensorEntity.save();
 
         return sensorEntity;
@@ -39,6 +41,7 @@ class OntologyBuilder {
         var actionEntity = new Entity('Action', vocab, this.store);
         actionEntity.id = action.id;
         actionEntity.literals.name = action.name;
+        actionEntity.references.device = [deviceEntity];
         actionEntity.save();
 
         return actionEntity;

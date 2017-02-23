@@ -9,8 +9,9 @@ class SensorSimilarityRanking {
   rank(callback) {
     let ranksByType = {};
     this.rules.forEach((rule) => {
-      let installationId = rule.model.id;
+      let installationId = rule.building.id;
       let relatedRules = this._allOtherRulesWithType(rule, installationId);
+
       if (relatedRules.length) {
         let ranks = relatedRules.map((relatedRule) => {
           return this._rankSimilarityOfRule(rule, relatedRule);
@@ -18,7 +19,7 @@ class SensorSimilarityRanking {
 
         let rank = _.max(ranks);
         if (ranksByType[rule.typeId]) {
-          if (rank > ranksByType[rule.typeId].rank) {
+          if (rank >= ranksByType[rule.typeId].rank) {
             ranksByType[rule.typeId] = {
               rank: rank,
               ruleId: rule.id
@@ -30,6 +31,11 @@ class SensorSimilarityRanking {
             ruleId: rule.id
           };
         }
+      } else {
+        ranksByType[rule.typeId] = {
+          rank: 0,
+          ruleId: rule.id
+        };
       }
     });
 
@@ -59,9 +65,10 @@ class SensorSimilarityRanking {
 
         let sensorsToFuzzySet = (sensors) => {
           let fuzzySets = sensors.map((sensor) => {
-            let dataModel = this.repository.dataModelWithId(sensor.building.id);
-            return dataModel.sensorFuzzySet(sensor);
+            let data = sensor.sensorData;
+            return data.available ? data.fuzzySet : null;
           }).filter((fs) => { return fs; });
+
           if (fuzzySets.length) {
             return fuzzySets.reduce((set1, set2) => { set1.combineWith(set2); return set1; });
           }
@@ -95,14 +102,12 @@ class SensorSimilarityRanking {
     };
 
     rule.conditions.forEach((condition) => {
-      if (condition.requiresSensor()) {
-        let sensors = condition.sensors();
-        addSensorsWithType(condition.sensorType, sensors);
-      } else if (condition.requiresVirtualSensor()) {
-        let vsSensorsByType = condition.virtualSensor.sensorsByType();
-        for (let type in vsSensorsByType) {
-          addSensorsWithType(type, vsSensorsByType[type]);
-        }
+      if (condition.requiresVirtualSensor()) {
+        condition.virtualSensors.forEach((vs) => {
+          vs.sensors.forEach((sensor) => {
+            addSensorsWithType(sensor.name, [sensor]);
+          });
+        });
       }
     });
 

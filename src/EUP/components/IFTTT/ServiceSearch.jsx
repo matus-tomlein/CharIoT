@@ -34,6 +34,7 @@ class ServiceSearch extends React.Component {
       };
       var name = service.serviceNameWithSource;
 
+      let transferredLabel;
       var className = 'rounded padded ';
       if (service.requiresVirtualSensor()) {
         let vs = service.virtualSensors[0];
@@ -41,6 +42,9 @@ class ServiceSearch extends React.Component {
           className += 'green';
         } else {
           className += 'yellow';
+        }
+        if (vs.isRecommended) {
+          transferredLabel = <span className='label label-primary'>Transferred</span>;
         }
       } else if (service.hasLocation()) {
         className += 'lightred';
@@ -55,7 +59,7 @@ class ServiceSearch extends React.Component {
       return <div className='column col-sm-12 col-4 pt-10'>
         <div className={className}>
           <p className='lead'>
-            {name}
+            {transferredLabel} {name}
           </p>
           <p>
             {options}

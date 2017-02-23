@@ -7,9 +7,10 @@ const Ontology = require('./Ontology'),
       generateSemanticRuleForRule = require('./generateSemanticRuleForRule'),
       generateSemanticRuleForVirtualSensor = require('./generateSemanticRuleForVirtualSensor'),
       OntologyBuilder = require('./OntologyBuilder'),
-      Rule = require('../../../Model/Rule'),
-      VirtualSensor = require('../../../Model/VirtualSensor'),
-      ConditionOrAction = require('../../../Model/ConditionOrAction');
+      chariotModel = require('../../../chariotModel'),
+      Rule = chariotModel.Rule,
+      VirtualSensor = chariotModel.VirtualSensor,
+      ConditionOrAction = chariotModel.ConditionOrAction;
 
 class RuleGenerator {
   constructor(repository, installation) {
@@ -47,7 +48,9 @@ class RuleGenerator {
       let rules = this._findRulesInStore(store);
       rules = this._removeInstalledRules(rules);
 
-      callback(null, rules);
+      let virtualSensors = this._findVirtualSensorsInStore(store);
+
+      callback(null, rules, virtualSensors);
     });
   }
 
@@ -72,14 +75,55 @@ class RuleGenerator {
     });
   }
 
+  _findVirtualSensorsInStore(store) {
+    let query = new EntityQuery('VirtualSensor', vocab, store);
+    let virtualSensors = [];
+
+    query.all().forEach((entity) => {
+      let name = entity.literals.name;
+      let programmingType = entity.literals.programmingType;
+      let labels = JSON.parse(entity.literals.labels);
+      let samples = JSON.parse(entity.literals.samples);
+      let conditions = JSON.parse(entity.literals.conditions);
+
+      let sensors = entity.references.sensor;
+      let inputs = sensors.map((sensorEntity) => {
+        sensorEntity.load();
+        return sensorEntity.literals.uuid;
+      });
+
+      let virtualSensor = new VirtualSensor({}, this.installation);
+      virtualSensor.name = name;
+      virtualSensor.labels = labels;
+      virtualSensor.samples = samples;
+      virtualSensor.data.conditions = conditions;
+      virtualSensor.programmingType = programmingType;
+      virtualSensor.inputs = inputs;
+
+      let existingVirtualSensor = this.installation.virtualSensors.find((vs) => {
+        console.log(vs.typeId);
+        console.log(virtualSensor.typeId);
+        return vs.typeId == virtualSensor.typeId;
+      });
+
+      if (!existingVirtualSensor) {
+        let newVirtualSensor = virtualSensors.find((vs) => {
+          return vs.typeId == virtualSensor.typeId;
+        });
+
+        if (!newVirtualSensor) {
+          virtualSensors.push(virtualSensor);
+        }
+      }
+    });
+
+    return virtualSensors;
+  }
+
   _createConditionOrAction(conditionEntity) {
     let condition = new ConditionOrAction({}, this.installation);
-    condition.attributes = JSON.parse(conditionEntity.literals.attributesJson);
-    condition.requiredAttributes = JSON.parse(conditionEntity.literals.requiredAttributesJson);
-
-    if (conditionEntity.literals.sensorType) {
-      condition.sensorType = conditionEntity.literals.sensorType;
-    }
+    condition.options = JSON.parse(conditionEntity.literals.options);
+    condition.value = conditionEntity.literals.value;
 
     if (conditionEntity.literals.actionType) {
       condition.actionType = conditionEntity.literals.actionType;
@@ -106,39 +150,8 @@ class RuleGenerator {
       });
     }
 
-    if (conditionEntity.references.virtualSensor) {
-      let virtualSensorEntities = conditionEntity.references.virtualSensor;
-      virtualSensorEntities.forEach((virtualSensorEntity) => {
-        virtualSensorEntity.load();
-        let name = virtualSensorEntity.literals.name;
-        let labels = virtualSensorEntity.literals.label;
-        if (!Array.isArray(labels)) labels = [ labels ];
-        let locationEntity = virtualSensorEntity.references.location[0];
-        locationEntity.load();
-        let locationName = locationEntity.literals.name;
-        let samples = JSON.parse(virtualSensorEntity.literals.samples);
-
-        let existingVirtualSensor = this.installation.virtualSensors.find((vs) => {
-          return vs.name == name && vs.locationName == locationName &&
-            JSON.stringify(_.sortBy(vs.labels)) == JSON.stringify(_.sortBy(labels));
-        });
-
-        if (existingVirtualSensor) {
-          condition.virtualSensor = existingVirtualSensor;
-        } else {
-          let virtualSensor = new VirtualSensor({}, this.installation);
-          virtualSensor.name = name;
-          virtualSensor.labels = labels;
-          virtualSensor.samples = samples;
-          virtualSensor.locationName = locationName;
-
-          let sensors = virtualSensorEntity.literals.sensor;
-          if (!Array.isArray(sensors)) sensors = [ sensors ];
-          virtualSensor.sensors = sensors;
-
-          condition.recommendedVirtualSensor = virtualSensor;
-        }
-      });
+    if (conditionEntity.literals.virtualSensorName) {
+      condition.virtualSensorName = conditionEntity.literals.virtualSensorName;
     }
 
     return condition;

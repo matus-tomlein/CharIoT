@@ -1,5 +1,6 @@
 var React = require('react'),
     browserHistory = require('react-router').browserHistory,
+    _ = require('underscore'),
 
     elements = require('./elements'),
     Container = elements.Container,
@@ -75,13 +76,16 @@ class ExplorePage extends React.Component {
     });
 
     let relatedRulesToDevices = [];
-    model.devices.forEach((device) => {
-      let related = recommendations.rulesRelatedToDevice(device);
+    let deviceTypes = _.uniq(model.devices.map((device) => {
+      return device.type;
+    }));
+    deviceTypes.forEach((deviceType) => {
+      let related = recommendations.rulesRelatedToDeviceType(deviceType);
       if (related.length) {
         related = related.map((r) => { return <Rule rule={r} />; });
 
         relatedRulesToDevices.push(<div>
-          <h5>Since you have: <i>{device.name}</i></h5>
+          <h5>Since you have a <i>{deviceType}</i></h5>
           <div className='columns'>
             {related}
           </div>

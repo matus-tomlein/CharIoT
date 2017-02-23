@@ -62,8 +62,12 @@ class VSForm extends React.Component {
     });
 
     let selectedInputs = sensor.sensors.map((s) => {
-      return s.device.name + ' – ' + s.name;
-    }).join(', ');
+      return <span> <div className='chip-sm'>
+        <span className='chip-name'>
+          <i className="fa fa-thermometer-half" aria-hidden="true"></i> {s.device.name} – {s.name}
+        </span>
+      </div> </span>;
+    });
 
     return <div>
       <div className="form-group">

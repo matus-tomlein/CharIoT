@@ -2,7 +2,8 @@ const _ = require('underscore'),
 
       RuleGenerator = require('./Recommendation/RuleGenerator'),
       SensorSimilarityRanking = require('./Recommendation/SensorSimilarityRanking'),
-      Recommendations = require('../Model/Recommendations');
+      chariotModel = require('../chariotModel'),
+      Recommendations = chariotModel.Recommendations;
 
 class RecommendationService {
   constructor(installation, repository) {
@@ -18,17 +19,22 @@ class RecommendationService {
       this.recommendations.addRelatedRulesToRule(rule, related);
     });
 
-    let deviceNames = _.uniq(this.installation.devices.map((d) => { return d.name; }));
+    let deviceNames = _.uniq(this.installation.devices.map((d) => { return d.type; }));
     deviceNames.forEach((deviceName) => {
-      let related = relatedRules.recommendRelatedRulesForDevice(deviceName, rules);
-      this.recommendations.addRelatedRulesToDevice(deviceName, related);
+      if (deviceName) {
+        let related = relatedRules.recommendRelatedRulesForDevice(deviceName, rules);
+        this.recommendations.addRelatedRulesToDevice(deviceName, related);
+      }
     });
   }
 
   recommendRules(callback) {
     let ruleGenerator = new RuleGenerator(this.repository, this.installation);
-    ruleGenerator.generate((err, generatedRules) => {
+
+    ruleGenerator.generate((err, generatedRules, generatedVirtualSensors) => {
       if (err) { callback(err); return; }
+
+      this.recommendations.virtualSensors = generatedVirtualSensors;
 
       let ranker = new SensorSimilarityRanking(generatedRules, this.repository);
       ranker.rank((err, ranks) => {

@@ -14,9 +14,23 @@ class OverviewPage extends React.Component {
   }
 
   componentDidMount() {
-    modelHelper.fetch((err, data) => {
-      this.setState(data);
-    });
+    let updateData = () => {
+      modelHelper.fetch((err, data) => {
+        if (this.state.data != data) {
+          this.setState(data);
+        }
+      });
+    };
+
+    updateData();
+    this._timer = setInterval(updateData, 1000);
+  }
+
+  componentWillUnmount() {
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
   }
 
   render() {

@@ -17,9 +17,9 @@ class RelatedRules {
     }
 
     rules.forEach((rule) => {
-      let deviceNames = rule.usedDevices().map((device) => { return device.name; });
-      _.uniq(deviceNames).forEach((deviceName) => {
-        this.addRelation(deviceName, rule.typeId);
+      let deviceTypes = rule.usedDevices().map((device) => { return device.type; });
+      _.uniq(deviceTypes).forEach((deviceType) => {
+        this.addRelation(deviceType, rule.typeId);
       });
     });
   }
@@ -36,8 +36,8 @@ class RelatedRules {
     return this.getRelatedRules(rule.typeId, rules);
   }
 
-  recommendRelatedRulesForDevice(deviceName, rules) {
-    return this.getRelatedRules(deviceName, rules);
+  recommendRelatedRulesForDevice(deviceType, rules) {
+    return this.getRelatedRules(deviceType, rules);
   }
 
   getRelatedRules(toType, rules) {
