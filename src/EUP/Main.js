@@ -1,4 +1,4 @@
-const GIoTTOApi = require('../../../giotto-api'),
+const GIoTTOApi = require('../giottoApi'),
       RecommendationsUpdater = require('./RecommendationsUpdater'),
       Model = require('./Model'),
       Runtime = require('./Runtime'),

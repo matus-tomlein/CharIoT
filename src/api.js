@@ -1,4 +1,4 @@
-var GIoTTOApi = require('../../giotto-api');
+var GIoTTOApi = require('./giottoApi');
 
 var api = new GIoTTOApi({
   clientId: 'TIHynZ283Jb8HC57VQKuAZjPOBfnLusQRZQEUV8u',
