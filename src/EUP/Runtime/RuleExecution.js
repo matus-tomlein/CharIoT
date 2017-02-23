@@ -37,13 +37,15 @@ class RuleExecution {
 
   sensorValueUpdated(virtualSensorId, value) {
     var shouldTrigger = false;
-    this.conditions.filter(function (condition) {
+    this.conditions.filter((condition) => {
       if (condition.subscribedSensors) {
-        return condition.subscribedSensors.find((vs) => {
+        let found = condition.subscribedSensors().find((vs) => {
           return vs.id == virtualSensorId;
         });
+        return found ? true : false;
       }
-    }).forEach(function (condition) {
+      return false;
+    }).forEach((condition) => {
       if (condition.shouldNewSensorValueTrigger(value))
         shouldTrigger = true;
     });
