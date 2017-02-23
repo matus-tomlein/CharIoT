@@ -27,7 +27,7 @@
     "chariot-model": "^1.0.12",
     "compute-cosine-similarity": "^1.0.0",
     "express": "^4.14.0",
-    "giotto-api": "^1.0.6",
+    "giotto-api": "^1.0.7",
     "jquery": "^3.1.1",
     "js-combinatorics": "^0.5.2",
     "n3": "^0.8.5",
