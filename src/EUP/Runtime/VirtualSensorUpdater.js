@@ -5,7 +5,7 @@ class VirtualSensorUpdater {
     this.runtime = runtime;
     this.unsubscribes = [];
 
-    let config = { port: 6379 };
+    let config = { host: 'case.tomlein.org', port: 7777 };
     this.nrp = new NRP(config);
   }
 
