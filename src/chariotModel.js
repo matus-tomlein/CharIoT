@@ -1,1 +1,1 @@
-module.exports = require('../../chariot-model');
+module.exports = require('chariot-model');
