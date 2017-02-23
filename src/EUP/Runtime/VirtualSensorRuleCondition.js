@@ -11,12 +11,8 @@ class VirtualSensorRuleCondition {
   }
 
   shouldNewSensorValueTrigger(newValue, uuid) {
-    newValue = parseInt(newValue);
-
     let vs = this.condition.virtualSensors.find((vs) => { return vs.id == uuid; });
     if (vs) {
-      newValue = vs.labels[newValue];
-      console.log(newValue);
       this.lastValue = newValue;
 
       var shouldTrigger = !this.previouslySatisfied && this.isSatisfied();

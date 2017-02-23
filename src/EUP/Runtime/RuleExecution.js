@@ -46,7 +46,7 @@ class RuleExecution {
       }
       return false;
     }).forEach((condition) => {
-      if (condition.shouldNewSensorValueTrigger(value))
+      if (condition.shouldNewSensorValueTrigger(value, virtualSensorId))
         shouldTrigger = true;
     });
 
