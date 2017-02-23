@@ -85,6 +85,8 @@ main.initialize((err) => {
   // api/virtualSensors
 
   a.post('/api/virtualSensors', function (req, res) {
+    console.log('Request to create a virtual sensor');
+
     let model = main.model;
     let vs = new VirtualSensor(req.body, model.building);
     let createFunction = vs.id ? main.giottoApi.updateVirtualSensor :
