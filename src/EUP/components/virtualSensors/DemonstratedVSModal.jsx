@@ -38,9 +38,13 @@ class DemonstratedVSModal extends React.Component {
 
     let body;
     if (this.state.submitting) {
-      $.post('/api/virtualSensors', sensor.data, () => {
-        browserHistory.push('/refresh');
-      });
+      if (!this._requestSent) {
+        this._requestSent = true;
+
+        $.post('/api/virtualSensors', sensor.data, () => {
+          browserHistory.push('/refresh');
+        });
+      }
 
       body = <div className='text-center'>
         <Loading text='Training...' />

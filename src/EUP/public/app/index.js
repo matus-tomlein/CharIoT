@@ -67597,9 +67597,13 @@ var DemonstratedVSModal = function (_React$Component) {
 
       var body = void 0;
       if (this.state.submitting) {
-        $.post('/api/virtualSensors', sensor.data, function () {
-          browserHistory.push('/refresh');
-        });
+        if (!this._requestSent) {
+          this._requestSent = true;
+
+          $.post('/api/virtualSensors', sensor.data, function () {
+            browserHistory.push('/refresh');
+          });
+        }
 
         body = React.createElement(
           'div',
@@ -68298,9 +68302,13 @@ var ProgrammedVSModal = function (_React$Component3) {
 
       var body = void 0;
       if (this.state.submitting) {
-        $.post('/api/virtualSensors', sensor.data, function () {
-          browserHistory.push('/refresh');
-        });
+        if (!this._requestSent) {
+          this._requestSent = true;
+
+          $.post('/api/virtualSensors', sensor.data, function () {
+            browserHistory.push('/refresh');
+          });
+        }
 
         body = React.createElement(
           'div',
