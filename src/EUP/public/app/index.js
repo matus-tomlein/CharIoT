@@ -67027,6 +67027,8 @@ module.exports = function (model, filters, graphParams) {
 },{"underscore":482}],532:[function(require,module,exports){
 'use strict';
 
+var _ = require('underscore');
+
 module.exports = function (model, filters, graphParams) {
   if (filters.showSensors) {
     model.virtualSensors.forEach(function (vs) {
@@ -67047,14 +67049,17 @@ module.exports = function (model, filters, graphParams) {
         width: '2px'
       });
 
-      vs.sensors.forEach(function (sensor) {
+      var devices = _.uniq(vs.sensors.map(function (sensor) {
+        return sensor.device.id;
+      }));
+      devices.forEach(function (deviceId) {
         graphParams.edges.push({
           from: vs.id,
-          to: sensor.device.id,
-          label: sensor.name,
+          to: deviceId,
+          label: '',
           lineInterpolateBasis: false,
           color: '#C0C0C0',
-          dashed: false,
+          dashed: true,
           arrowhead: 'undirected'
         });
       });
@@ -67070,7 +67075,7 @@ module.exports = function (model, filters, graphParams) {
 };
 
 
-},{}],533:[function(require,module,exports){
+},{"underscore":482}],533:[function(require,module,exports){
 'use strict';
 
 var buildLocations = require('./buildLocations'),

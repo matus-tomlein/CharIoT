@@ -1,3 +1,5 @@
+const _ = require('underscore');
+
 module.exports = (model, filters, graphParams) => {
   if (filters.showSensors) {
     model.virtualSensors.forEach((vs) => {
@@ -19,14 +21,15 @@ module.exports = (model, filters, graphParams) => {
         width: '2px'
       });
 
-      vs.sensors.forEach((sensor) => {
+      let devices = _.uniq(vs.sensors.map((sensor) => { return sensor.device.id; }));
+      devices.forEach((deviceId) => {
         graphParams.edges.push({
           from: vs.id,
-          to: sensor.device.id,
-          label: sensor.name,
+          to: deviceId,
+          label: '',
           lineInterpolateBasis: false,
           color: '#C0C0C0',
-          dashed: false,
+          dashed: true,
           arrowhead: 'undirected'
         });
       });
