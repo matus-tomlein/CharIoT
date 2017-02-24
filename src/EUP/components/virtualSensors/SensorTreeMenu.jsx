@@ -1,4 +1,5 @@
 const React = require('react'),
+      _ = require('underscore'),
 
       TreeMenu = require('react-tree-menu').TreeMenu;
 
@@ -10,7 +11,8 @@ class SensorTreeMenu extends React.Component {
     let data = model.locations.map((location) => {
       let devices = location.devices.map((device) => {
         let deviceChecked = true;
-        let sensors = device.sensors.map((sensor) => {
+        let sensors = _.sortBy(device.sensors, (s) => { return s.name; });
+        sensors = sensors.map((sensor) => {
           let checked = this.props.checkedIds &&
             this.props.checkedIds.includes(sensor.id);
           if (!checked) { deviceChecked = false; }
