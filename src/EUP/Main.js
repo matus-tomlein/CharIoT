@@ -1,8 +1,7 @@
 const GIoTTOApi = require('../giottoApi'),
       RecommendationsUpdater = require('./RecommendationsUpdater'),
+      VirtualSensorUpdater = require('./VirtualSensorUpdater'),
       Model = require('./Model'),
-      Runtime = require('./Runtime'),
-      VirtualSensorUpdater = require('./Runtime/VirtualSensorUpdater'),
 
       Settings = require('../Helpers').Settings;
 
@@ -49,15 +48,16 @@ class Main {
   }
 
   _login(callback) {
-    let api = new GIoTTOApi(this.credentials);
+    let credentials = this.credentials;
+    credentials.redis = { host: 'case.tomlein.org', port: 7777 };
+    let api = new GIoTTOApi(credentials);
 
     api.authenticate((err) => {
       if (err) { callback(err); return; }
 
       this.giottoApi = api;
 
-      this.runtime = new Runtime(this.giottoApi);
-      this.virtualSensorUpdater = new VirtualSensorUpdater(this.runtime);
+      this.virtualSensorUpdater = new VirtualSensorUpdater(this.giottoApi);
       if (err) { callback(err); return; }
 
       this.refresh((err) => {
@@ -70,15 +70,12 @@ class Main {
 
   refresh(callback) {
     if (!this.isLoggedIn) { callback('Not logged in'); return; }
-    if (this.runtime) this.runtime.reset();
     if (this.virtualSensorUpdater) { this.virtualSensorUpdater.unsubscribeAll(); }
 
     this.giottoApi.getBuildingModel(this.credentials.building, (err, building) => {
       if (err) { callback(err); return; }
 
       this.settings.data.giotto = JSON.parse(JSON.stringify(building.data));
-
-      if (this.runtime) this.runtime.start(this.model);
 
       var updater = new RecommendationsUpdater(this.giottoApi, this.settings);
       updater.update((err) => {

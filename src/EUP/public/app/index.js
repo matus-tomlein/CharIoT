@@ -68573,11 +68573,11 @@ var ConditionOrActionInitializer = function () {
     key: "addVirtualSensorLabelAttribute",
     value: function addVirtualSensorLabelAttribute(virtualSensor, selected) {
       var options = {};
-      virtualSensor.labels.forEach(function (label) {
-        options[label] = label;
+      virtualSensor.labels.forEach(function (label, i) {
+        options[i] = label;
       });
       this.condition.options = options;
-      this.condition.value = selected || virtualSensor.labels[0];
+      this.condition.value = selected || 0;
     }
   }]);
 

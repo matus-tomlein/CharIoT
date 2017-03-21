@@ -11,11 +11,11 @@ class ConditionOrActionInitializer {
 
   addVirtualSensorLabelAttribute(virtualSensor, selected) {
     let options = {};
-    virtualSensor.labels.forEach((label) => {
-      options[label] = label;
+    virtualSensor.labels.forEach((label, i) => {
+      options[i] = label;
     });
     this.condition.options = options;
-    this.condition.value = selected || virtualSensor.labels[0];
+    this.condition.value = selected || 0;
   }
 }
 
