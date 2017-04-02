@@ -36,23 +36,23 @@ Creating a rule requires a virtual sensor - there are two types of virtual senso
 
 To create a rule, go to the ``Build'' section and follow the IFTTT-like interface.
 
-# Screenshots
+## Screenshots
 
-## Overview of installation
+### Overview of installation
 
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/overview.png" width="400"/>
 
-## Training virtual sensors
+### Training virtual sensors
 
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/create_virtual_sensor.png" width="400"/> <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/demonstrations.png" width="400"/>
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/training.png" width="400"/>
 
-## IFTTT rules
+### IFTTT rules
 
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/ifttt.png" width="400"/> <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/rule_overview.png" width="400"/>
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/conditions.png" width="400"/> <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/actions.png" width="400"/>
 
-## Rule recommendations
+### Rule recommendations
 
 <img src="https://f001.backblazeb2.com/file/referred/chariot-screenshots/explore.png" width="400"/>
 
