@@ -1,7 +1,11 @@
 CharIoT
 =======
 
-End-user programming interface for GIoTTO.
+CharIoT provides an end-user programming interface for the GIoTTO stack. It connects to the BuildingDepot middleware to discover and communicate with sensors and actuators.
+
+CharIoT enables creating virtual sensors which can capture higher-level events (e.g., window opened, meeting ongoing) based on raw data. It provides two ways to create virtual sensors: by programming their conditions or demonstrating them using programming by demonstration.
+
+Rules are created in an IFTTT-inspired interface. They may contain multiple conditions and actions.
 
 ## Installation
 
