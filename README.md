@@ -13,7 +13,7 @@ Rules are created in an IFTTT-inspired interface. They may contain multiple cond
 2. Clone/download this folder and `cd` into it
 3. Run `npm install`
 4. Optional: in order to enable the explore tab, install the Eye reasoner
-  - http://eulersharp.sourceforge.net/INSTALL
+   - http://eulersharp.sourceforge.net/INSTALL
 
 ## Usage
 
@@ -31,10 +31,12 @@ To add a location for a device:
 
 Creating a rule requires a virtual sensor - there are two types of virtual sensors:
 
-- Programmed - added by clicking the ``Program an event'' button. Contain conditions on a specific sensor value, e.g., temperature
-- Virtual - demonstrated using PbD. Click on ``Demonstrate an event'' to add it.
+- Programmed
+  - added by clicking the "Program an event" button. Contain conditions on a specific sensor value, e.g., temperature
+- Virtual
+  - demonstrated using PbD. Click on "Demonstrate an event" to add it.
 
-To create a rule, go to the ``Build'' section and follow the IFTTT-like interface.
+To create a rule, go to the "Build" section and follow the IFTTT-like interface.
 
 ## Screenshots
 
