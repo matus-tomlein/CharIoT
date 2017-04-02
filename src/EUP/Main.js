@@ -9,7 +9,7 @@ class Main {
   constructor() {
     var blankData = Model.blankData;
     blankData.userId = Math.random().toString(36);
-    this.settings = new Settings(__dirname + '/' + this.sessionName + '.json', blankData);
+    this.settings = new Settings(__dirname + '/../../settings/' + this.sessionName + '.json', blankData);
   }
 
   get model() { return new Model(this.settings.data); }
@@ -49,7 +49,7 @@ class Main {
 
   _login(callback) {
     let credentials = this.credentials;
-    credentials.redis = { host: 'case.tomlein.org', port: 7777 };
+    // credentials.redis = { host: 'case.tomlein.org', port: 7777 };
     let api = new GIoTTOApi(credentials);
 
     api.authenticate((err) => {

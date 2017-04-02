@@ -32,3 +32,6 @@ node_modules
 src/.config.json
 src/nodes/generated
 src/app-config.js
+
+settings/*
+!settings/.gitkeep

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "cd src/EUP; node index.js",
     "test": "mocha"
   },
   "author": "Matus Tomlein",
